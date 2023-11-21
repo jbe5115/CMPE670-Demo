@@ -18,12 +18,20 @@ module crc_calc # (
     output       o_frame_data,
     output       o_frame_data_valid,
     output       o_frame_data_fas,
+    // hardware interface
+    output       o_crc_val,
     // DEMAP ONLY
     output       o_crc_err
 );
 
-    // when map mode is 1, calculate the CRC and insert it into the frame.
-    // when it is 0, calculate the CRC and compare it with the one in the frame.
+    // when map mode is 1: calculate the CRC on every valid clock cycle that contains payload data (column count is between 16 and 1039 on any row)
+    //                     output the crc (on o_frame_data) when row is 3 and column is 1040
+    
+    // when map mode is 0: same as when map mode is one, but on row 3 column 1040 check the incoming CRC with the currently calculated one.
+    //                     if they dont match, set crc error. it should be reset on the next valid cycle (which is the start of a new frame).
+    
+    // in both cases, o_crc_val should be set to the current crc on all cycles.
+    
 
 
 endmodule

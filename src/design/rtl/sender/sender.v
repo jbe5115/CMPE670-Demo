@@ -8,6 +8,7 @@ module sender (
     input    i_rst,
     input    i_uart_rx,
     input    i_arq_en,
+    output   o_crc_val,
     // TRANSMIT INTERFACE
     output   o_otn_rx_data,
     output   i_otn_tx_ack
