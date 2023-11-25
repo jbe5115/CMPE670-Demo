@@ -11,7 +11,7 @@ module sender (
     output   o_crc_val,
     // TRANSMIT INTERFACE
     output   o_otn_rx_data,
-    output   i_otn_tx_ack
+    input    i_otn_tx_ack
 );
     // UART clock control
     reg  [11:0]  scount12;
@@ -33,7 +33,6 @@ module sender (
     wire         map_frame_data_valid;
     wire         map_frame_data_fas;
     wire         line_fifo_ready;
-    wire         tran_rec_fifo_ready;
     
     // TRAN REC IN/OUT
     wire [7:0]   tr_frame_data;
@@ -88,7 +87,7 @@ module sender (
         .o_frame_data_valid    (map_frame_data_valid),
         .o_frame_data_fas      (map_frame_data_fas),
         .i_line_fifo_ready     (line_fifo_ready),
-        .i_tran_rec_fifo_ready (tran_rec_fifo_ready),
+        .i_tran_rec_fifo_ready (tr_fifo_ready),
         .i_line_retrans_req    (),
         // hardware interface
         .o_crc_val             (o_crc_val)

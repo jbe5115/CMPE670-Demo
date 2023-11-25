@@ -63,6 +63,7 @@ module tran_rec (
     assign o_read_line_fifo = (r_state == send_mem_frame);
     assign o_retrans_req    = r_retrans_req;
     assign o_fifo_ready     = s_fifo_ready;
+    assign o_otn_rx_data    = r_otn_rx_data;
     
     assign m_fifo_ready = ((r_state == send_frame) || (r_state == send_mem_frame)) && (r_bit_count == 3'd7);
 
@@ -106,7 +107,7 @@ module tran_rec (
                     end
                 end
                 read_ack : begin
-                    c_state <= check_ack;
+                    c_state = check_ack;
                 end
                 check_ack : begin
                     // is the ACK good or bad???
