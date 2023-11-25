@@ -122,6 +122,7 @@ module sender (
         // data from/to the mapper OR line FIFO
         .i_frame_data       (tr_frame_data),
         .i_frame_data_valid (tr_frame_data_valid),
+        .i_frame_data_fas   (map_frame_data_fas),
         // output control signals
         .o_fifo_ready       (tr_fifo_ready),
         .o_retrans_req      (tr_retrans_req),

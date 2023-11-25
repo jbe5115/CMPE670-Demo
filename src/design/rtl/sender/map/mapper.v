@@ -55,6 +55,7 @@ module mapper (
     end
     
     // Frame position counter
+    // TODO: FPC NEEDS TO KNOW IF RETRANS REQUEST IS OCCURING!!
     fpc fpc_map_inst (
         .i_clk      (i_clk),
         .i_rst      (i_rst),
