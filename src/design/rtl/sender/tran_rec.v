@@ -9,8 +9,9 @@ module tran_rec (
     // data from/to the mapper
     input   i_frame_data,
     input   i_frame_data_valid,
-    input   i_frame_data_fas,
-    output  o_fifo_rdy,
+   // input   i_frame_data_fas, // this is not needed (for now)
+    // output control signals
+    output  o_fifo_ready,
     output  o_retrans_req,
     // data in/out of the FPGA
     output  o_otn_rx_data,

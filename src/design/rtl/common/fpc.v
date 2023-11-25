@@ -4,13 +4,14 @@
 //   
 module fpc (
     // clock and control
-    input        i_clk,
-    input        i_rst,
+    input         i_clk,
+    input         i_rst,
 
-    input        i_valid,
+    input         i_valid,
+    input         i_data_req,
 
-    output       o_row_cnt,
-    output       o_col_cnt
+    output [1:0]  o_row_cnt,
+    output [10:0] o_col_cnt
 );
 
     // For every clock cycle where the input is valid, increase the column count by 1.

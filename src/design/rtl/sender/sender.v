@@ -28,7 +28,25 @@ module sender (
     wire         rx_pyld_data_req;
     wire         rx_fifo_ae;
     
-
+    // MAPPER -> LINE FIFO AND TRAN_REC
+    wire [7:0]   map_frame_data;
+    wire         map_frame_data_valid;
+    wire         map_frame_data_fas;
+    wire         line_fifo_ready;
+    wire         tran_rec_fifo_ready;
+    
+    // TRAN REC IN/OUT
+    wire [7:0]   tr_frame_data;
+    wire         tr_frame_data_valid;
+    wire         tr_fifo_ready;
+    wire         tr_retrans_req;
+    
+    // LINE FIFO OUT
+    wire [7:0]   lf_frame_data;
+    wire         lf_frame_data_valid;
+    wire         lf_ready;
+    
+  
     // UART RX (Serial -> 8b parallel)
     AXIS_UART_RX axis_uart_rx_inst (
         .CLK_100MHZ       (i_clk),
@@ -57,21 +75,62 @@ module sender (
     // Mapper!
     mapper mapper_inst (
         // clock and control
-        .i_clk              (i_clk),
-        .i_rst              (i_rst),
+        .i_clk                 (i_clk),
+        .i_rst                 (i_rst),
         // client interface
-        .i_pyld_data        (rx_pyld_data),
-        .i_pyld_data_valid  (rx_pyld_data_valid),
-        .o_pyld_data_req    (rx_pyld_data_req),
-        .i_fifo_empty       (rx_fifo_ae),
+        .i_pyld_data           (rx_pyld_data),
+        .i_pyld_data_valid     (rx_pyld_data_valid),
+        .o_pyld_data_req       (rx_pyld_data_req),
+        .i_fifo_empty          (rx_fifo_ae),
         // line interface
-        .o_frame_data       (),
-        .o_frame_data_valid (),
-        .o_frame_data_fas   ()
+        .o_frame_data          (map_frame_data),
+        .o_frame_data_valid    (map_frame_data_valid),
+        .o_frame_data_fas      (map_frame_data_fas),
+        .i_line_fifo_ready     (line_fifo_ready),
+        .i_tran_rec_fifo_ready (tran_rec_fifo_ready),
+        .i_line_retrans_req    (),
+        // hardware interface
+        .o_crc_val             (o_crc_val)
     );
     
-    // TODO: Instantiate tran_rec
+    // LINE AXIS FIFO (Takes in MAPPED line data, sends it to tran_req when retrans is occuring!)
+    // TODO: NEEDS TO RESET EVERY TIME A GOOD ACK IS RECEIVED!
+    axis_data_fifo_rx line_fifo_inst (
+        .s_axis_aresetn  (~i_rst),
+        .s_axis_aclk     (i_clk),
+        // mapper -> FIFO in
+        .s_axis_tvalid   (map_frame_data_valid),
+        .s_axis_tready   (line_fifo_ready),
+        .s_axis_tdata    (map_frame_data),
+        // FIFO out -> tran_rec
+        .m_axis_tvalid   (lf_frame_data_valid),
+        .m_axis_tready   (lf_ready),
+        .m_axis_tdata    (lf_frame_data),
+        .almost_empty    (/* open*/)
+    );
     
+    assign lf_ready = tr_fifo_ready && tr_retrans_req;
+    
+    assign tr_frame_data       = (tr_retrans_req) ? lf_frame_data       : map_frame_data;
+    assign tr_frame_data_valid = (tr_retrans_req) ? lf_frame_data_valid : map_frame_data_valid;
+    
+    // TODO: Instantiate tran_rec
+    tran_rec tran_rec_inst (
+        // clock and control
+        .i_clk              (i_clk),
+        .i_rst              (i_rst),
+        // data from/to the mapper OR line FIFO
+        .i_frame_data       (tr_frame_data),
+        .i_frame_data_valid (tr_frame_data_valid),
+        // output control signals
+        .o_fifo_ready       (tr_fifo_ready),
+        .o_retrans_req      (tr_retrans_req),
+        // data in/out of the FPGA
+        .o_otn_rx_data      (o_otn_rx_data),
+        .i_otn_tx_ack       (i_otn_tx_ack),
+        // FPGA switch input
+        .i_arq_en           (i_arq_en)
+    );
     
     
     always @(posedge i_clk) begin

@@ -6,8 +6,8 @@ module frame_controller (
     // clock and control
     input        i_clk,
     input        i_rst,
-    input        i_row_cnt,
-    input        i_col_cnt,
+    input [1:0]  i_row_cnt,
+    input [1:0]  i_col_cnt,
     // client interface
     input [7:0]  i_pyld_data,
     input        i_pyld_data_valid,
