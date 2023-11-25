@@ -40,6 +40,7 @@ module sender (
     wire         tr_frame_data_valid;
     wire         tr_fifo_ready;
     wire         tr_retrans_req;
+    wire         tr_read_line_fifo;
     
     // LINE FIFO OUT
     wire [7:0]   lf_frame_data;
@@ -109,10 +110,11 @@ module sender (
         .almost_empty    (/* open*/)
     );
     
-    assign lf_ready = tr_fifo_ready && tr_retrans_req;
+    // don't read out of line FIFO until: tran_rec FIFO is ready, retrans is occuring, and line FIFO write side is ready
+    assign lf_ready = tr_fifo_ready && tr_read_line_fifo && line_fifo_ready;
     
-    assign tr_frame_data       = (tr_retrans_req) ? lf_frame_data       : map_frame_data;
-    assign tr_frame_data_valid = (tr_retrans_req) ? lf_frame_data_valid : map_frame_data_valid;
+    assign tr_frame_data       = (tr_read_line_fifo) ? lf_frame_data       : map_frame_data;
+    assign tr_frame_data_valid = (tr_read_line_fifo) ? lf_frame_data_valid : map_frame_data_valid;
     
     // TODO: Instantiate tran_rec
     tran_rec tran_rec_inst (
@@ -126,6 +128,7 @@ module sender (
         // output control signals
         .o_fifo_ready       (tr_fifo_ready),
         .o_retrans_req      (tr_retrans_req),
+        .o_read_line_fifo   (tr_read_line_fifo),
         // data in/out of the FPGA
         .o_otn_rx_data      (o_otn_rx_data),
         .i_otn_tx_ack       (i_otn_tx_ack),

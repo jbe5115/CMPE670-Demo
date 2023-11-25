@@ -19,6 +19,8 @@ module data_request (
     // combinational internal signal, registered internal signal
     reg    c_data_req, r_data_req;
     
+    assign o_data_req = r_data_req;
+    
     always @(*) begin
         // latch prevention (only needed if there are unresolved cases)
         c_data_req = 1'b0;

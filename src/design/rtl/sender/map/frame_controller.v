@@ -7,12 +7,12 @@ module frame_controller (
     input        i_clk,
     input        i_rst,
     input [1:0]  i_row_cnt,
-    input [1:0]  i_col_cnt,
+    input [10:0] i_col_cnt,
     // client interface
     input [7:0]  i_pyld_data,
     input        i_pyld_data_valid,
     // line interface
-    output       o_frame_data,
+    output [7:0] o_frame_data,
     output       o_frame_data_valid,
     output       o_frame_data_fas
 );
