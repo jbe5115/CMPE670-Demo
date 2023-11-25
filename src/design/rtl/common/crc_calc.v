@@ -8,60 +8,96 @@ module crc_calc # (
     // clock and control
     input        i_clk,
     input        i_rst,
-    input        i_row_cnt,
-    input        i_col_cnt,
+    input [1:0]  i_row_cnt,
+    input [10:0] i_col_cnt,
     // line interface in
     input [7:0]  i_frame_data,
     input        i_frame_data_valid,
     input        i_frame_data_fas,
     // line interface out
-    output       o_frame_data,
-    output       o_frame_data_valid,
-    output       o_frame_data_fas,
+    output reg [7:0] o_frame_data,
+    output reg       o_frame_data_valid,
+    output reg       o_frame_data_fas,
     // hardware interface
-    output       o_crc_val,
+    output reg [7:0] o_crc_val,
     // DEMAP ONLY
-    output       o_crc_err
+    output reg       o_crc_err
 );
-
-    reg [7:0] crc_val = 0;
-
-    // when map mode is 1: calculate the CRC on every valid clock cycle that contains payload data (column count is between 16 and 1039 on any row)
-    //                     output the crc (on o_frame_data) when row is 3 and column is 1040
-    
-    // when map mode is 0: same as when map mode is one, but on row 3 column 1040 check the incoming CRC with the currently calculated one.
-    //                     if they dont match, set crc error. it should be reset on the next valid cycle (which is the start of a new frame).
+    reg [7:0] crc_val = 8'b0;
     
     // in both cases, o_crc_val should be set to the current crc on all cycles.
-    
     // Last 8 bit row is CRC value
     always @(posedge i_clk) begin : CRCProc
         if (i_rst) begin
-            // Reset CRC/LSFR - Not sure what the reset value should be yet, so I chose 0
-            crc_val = 0;
+            // Set output values low.
+            o_frame_data        <= 8'b0;
+            o_frame_data_valid  <= 1'b0;
+            o_frame_data_fas    <= 1'b0;
+            o_crc_val           <= 8'b0;
+            o_crc_err           <= 1'b0;
+            crc_val             <= 8'b0;       
         end else begin
+            // when map mode is 0: same as when map mode is one, but on row 3 column 1040 check the incoming CRC with the currently calculated one.
+            //                     if they dont match, set crc error. it should be reset on the next valid cycle (which is the start of a new frame).
             case(MAP_MODE)
                 1'b0 : begin
-                    if (i_row_cnt == 3 && i_col_cnt == 1040) begin
+                    if (i_row_cnt == 3 && i_col_cnt == 1040 && i_frame_data_valid) begin
                         // Check incoming CRC with currently calculated one
-                    end else if(i_col_cnt >= 16 && i_col_cnt <= 1039 && i_frame_data_valid) begin
-                    
-                    end else if(i_col_cnt < 16) begin
-                    
-                    end
-                end
-                1'b1 : begin                    
-                    if (i_row_cnt == 3 && i_col_cnt == 1040) begin
-                        // Send CRC on output
+                        o_frame_data        <= crc_val;
+                        o_frame_data_valid  <= i_frame_data_valid;
+                        o_frame_data_fas    <= i_frame_data_fas; 
+                        o_crc_val           <= crc_val; 
+                        // Check CRC val and set error state if not equal
+                        if(i_frame_data != crc_val) begin
+                            o_crc_err       <= 1'b1;
+                        end else begin
+                            o_crc_err       <= 1'b0;
+                        end
                     end else if(i_col_cnt >= 16 && i_col_cnt <= 1039 && i_frame_data_valid) begin
                         // Calculate CRC and pass data through.
-                        crc(crc_val, i_frame_data);
-                    end else if(i_col_cnt < 16) begin
+                        o_frame_data        <= i_frame_data;
+                        o_frame_data_valid  <= i_frame_data_valid;
+                        o_frame_data_fas    <= i_frame_data_fas; 
+                        crc_val             <= crc(crc_val, i_frame_data);      // Calculate CRC Value for this iteration
+                    end else if(i_col_cnt < 16 && i_frame_data_valid) begin
+                        // Pass overhead through
+                        o_frame_data        <= i_frame_data;
+                        o_frame_data_valid  <= i_frame_data_valid;
+                        o_frame_data_fas    <= i_frame_data_fas;
+                        // Reset hardware interface
+                        o_crc_val           <= 8'b0;
+                        o_crc_err           <= 1'b0;
+                    end
+                end
+                // when map mode is 1: calculate the CRC on every valid clock cycle that contains payload data (column count is between 16 and 1039 on any row)
+                //                     output the crc (on o_frame_data) when row is 3 and column is 1040
+                1'b1 : begin                    
+                    if (i_row_cnt == 3 && i_col_cnt == 1040 && i_frame_data_valid) begin
+                        // Send CRC on output
+                        o_frame_data        <= crc_val;
+                        o_frame_data_valid  <= i_frame_data_valid;
+                        o_frame_data_fas    <= i_frame_data_fas;
+                        o_crc_val           <= crc_val;
+                    end else if(i_col_cnt >= 16 && i_col_cnt <= 1039 && i_frame_data_valid) begin
+                        // Calculate CRC and pass data through.
+                        o_frame_data        <= i_frame_data;
+                        o_frame_data_valid  <= i_frame_data_valid;
+                        o_frame_data_fas    <= i_frame_data_fas; 
+                        crc_val             <= crc(crc_val, i_frame_data);      // Calculate CRC Value for this iteration
+                    end else if(i_col_cnt < 16 && i_frame_data_valid) begin
                         // Pass data through since this is overhead
+                        o_frame_data        <= i_frame_data;
+                        o_frame_data_valid  <= i_frame_data_valid;
+                        o_frame_data_fas    <= i_frame_data_fas;
+                        // Reset hardware interface
+                        o_crc_val           <= 8'b0;
+                        o_crc_err           <= 1'b0;
                     end
                 end
                 default : begin
-                    // TODO : Default case.
+                    // Set error states on hardware if MAP_MODE IS INVALID
+                    o_crc_val <= 8'hf;
+                    o_crc_err <= 1'b0;
                 end
             endcase
         end
