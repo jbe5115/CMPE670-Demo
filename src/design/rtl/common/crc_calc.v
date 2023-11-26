@@ -1,6 +1,6 @@
 // crc_calc.v
 // CMPE 670 Project Fall 2023
-// Author(s):
+// Author(s): John Evans, Eric Falcone
 //  
 module crc_calc # (
     parameter    MAP_MODE = 1 // parameters are the same thing as generics in VHDL
@@ -23,7 +23,7 @@ module crc_calc # (
     // DEMAP ONLY
     output reg       o_crc_err
 );
-    reg [7:0] crc_val = 8'b0;
+    reg [7:0] crc_val = 8'b1;
     
     // in both cases, o_crc_val should be set to the current crc on all cycles.
     // Last 8 bit row is CRC value
@@ -33,7 +33,7 @@ module crc_calc # (
             o_frame_data        <= 8'b0;
             o_frame_data_valid  <= 1'b0;
             o_frame_data_fas    <= 1'b0;
-            o_crc_val           <= 8'b0;
+            o_crc_val           <= 8'b1;
             o_crc_err           <= 1'b0;
             crc_val             <= 8'b0;       
         end else begin
@@ -65,7 +65,8 @@ module crc_calc # (
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas;
                         // Reset hardware interface
-                        o_crc_val           <= 8'b0;
+                        crc_val             <= 8'b1;
+                        o_crc_val           <= 8'b1;
                         o_crc_err           <= 1'b0;
                     end
                 end
@@ -90,7 +91,8 @@ module crc_calc # (
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas;
                         // Reset hardware interface
-                        o_crc_val           <= 8'b0;
+                        crc_val             <= 8'b1;
+                        o_crc_val           <= 8'b1;
                         o_crc_err           <= 1'b0;
                     end
                 end
