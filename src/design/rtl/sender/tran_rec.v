@@ -13,7 +13,8 @@ module tran_rec (
     // output control signals
     output      o_fifo_ready,
     output      o_retrans_req,
-    output      o_read_line_fifo,
+    output      o_read_line_fifo, 
+    output      o_send_complete,  // Data was successfully and correctly sent to receiver
     // data in/out of the FPGA
     output      o_otn_rx_data,
     input       i_otn_tx_ack,
@@ -27,7 +28,8 @@ module tran_rec (
     localparam ack_wait       = 3'b010;
     localparam read_ack       = 3'b011;
     localparam check_ack      = 3'b100;
-    localparam send_mem_frame = 3'b101;
+    localparam trans_complete = 3'b101;
+    localparam send_mem_frame = 3'b110;
     reg [1:0] c_state, r_state;
     
     // total byte count for transmission
@@ -60,6 +62,7 @@ module tran_rec (
     wire [7:0] m_fifo_data;
    
     // direct output assignments
+    assign o_send_complete  = (r_state == trans_complete);
     assign o_read_line_fifo = (r_state == send_mem_frame);
     assign o_retrans_req    = r_retrans_req;
     assign o_fifo_ready     = s_fifo_ready;
@@ -111,7 +114,10 @@ module tran_rec (
                 end
                 check_ack : begin
                     // is the ACK good or bad???
-                    c_state = (r_otn_tx_ack) ? idle : send_mem_frame;
+                    c_state = (r_otn_tx_ack) ? trans_complete : send_mem_frame;
+                end
+                trans_complete : begin
+                    c_state = idle;
                 end
                 send_mem_frame : begin
                     if (r_byte_count == 4164) begin // mem frame is done transmitting?

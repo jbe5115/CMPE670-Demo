@@ -19,6 +19,7 @@ module mapper (
     input        i_tran_rec_fifo_ready,
     input        i_line_retrans_req,
     // hardware interface
+    input        i_corrupt_en,
     output       o_crc_val
 );
 
@@ -59,7 +60,6 @@ module mapper (
     end
     
     // Frame position counter
-    // TODO: FPC NEEDS TO KNOW IF RETRANS REQUEST IS OCCURING!!
     fpc fpc_map_inst (
         .i_clk              (i_clk),
         .i_rst              (i_rst),

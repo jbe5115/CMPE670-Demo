@@ -8,6 +8,7 @@ module sender (
     input    i_rst,
     input    i_uart_rx,
     input    i_arq_en,
+    input    i_corrupt_en,
     output   o_crc_val,
     // TRANSMIT INTERFACE
     output   o_otn_rx_data,
@@ -40,6 +41,7 @@ module sender (
     wire         tr_fifo_ready;
     wire         tr_retrans_req;
     wire         tr_read_line_fifo;
+    wire         tr_send_complete;
     
     // LINE FIFO OUT
     wire [7:0]   lf_frame_data;
@@ -88,15 +90,16 @@ module sender (
         .o_frame_data_fas      (map_frame_data_fas),
         .i_line_fifo_ready     (line_fifo_ready),
         .i_tran_rec_fifo_ready (tr_fifo_ready),
-        .i_line_retrans_req    (),
+        .i_line_retrans_req    (tr_retrans_req),
         // hardware interface
+        .i_corrupt_en          (i_corrupt_en),
         .o_crc_val             (o_crc_val)
     );
     
     // LINE AXIS FIFO (Takes in MAPPED line data, sends it to tran_req when retrans is occuring!)
-    // TODO: NEEDS TO RESET EVERY TIME A GOOD ACK IS RECEIVED!
+    // Reset FIFO when rst is enabled or a good ACK was received!
     axis_data_fifo_rx line_fifo_inst (
-        .s_axis_aresetn  (~i_rst),
+        .s_axis_aresetn  (~(i_rst || tr_send_complete)),
         .s_axis_aclk     (i_clk),
         // mapper -> FIFO in
         .s_axis_tvalid   (map_frame_data_valid),
@@ -128,6 +131,7 @@ module sender (
         .o_fifo_ready       (tr_fifo_ready),
         .o_retrans_req      (tr_retrans_req),
         .o_read_line_fifo   (tr_read_line_fifo),
+        .o_send_complete    (tr_send_complete),
         // data in/out of the FPGA
         .o_otn_rx_data      (o_otn_rx_data),
         .i_otn_tx_ack       (i_otn_tx_ack),
