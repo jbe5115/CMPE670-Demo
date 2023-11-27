@@ -7,6 +7,7 @@ entity AXIS_UART_TX is
         CLK_100MHZ         : in std_logic;
         RESET              : in std_logic;
         clk_en_16_x_baud   : in std_logic;
+        enable             : in std_logic;
         data_in            : in std_logic_vector(7 downto 0);
         UART_TX            : out std_logic;
         -- AXI STREAM

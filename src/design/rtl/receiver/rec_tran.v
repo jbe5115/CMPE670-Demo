@@ -12,10 +12,10 @@ module rec_tran (
     output [7:0] o_frame_data,
     output       o_frame_data_valid,
     // input control signals
-    output       i_fifo_ready,
+    input        i_tx_fifo_ready,
     // data in/out of the FPGA
-    output       i_otn_tx_data,
-    input        o_otn_rx_ack,
+    input        i_otn_tx_data,
+    output reg   o_otn_rx_ack,
     // fpga switch input
     input        i_arq_en
 );
@@ -48,6 +48,9 @@ module rec_tran (
     // fifo frame data valid
     wire m_fifo_frame_data_valid;
     wire s_fifo_frame_data_valid; // TODO: use this
+    
+    // send_good_ack/send_bad_ack counter
+    reg [1:0] c_ack_count, r_ack_count;
     
     // output assignments
     assign o_frame_data_valid = m_fifo_frame_data_valid && !(r_state == capture_pattern);
@@ -87,8 +90,14 @@ module rec_tran (
                     end
                 end
                 send_bad_ack : begin
+                    if (r_ack_count == 2'b11) begin
+                        c_state = idle;
+                    end
                 end
                 send_good_ack : begin
+                    if (r_ack_count == 2'b11) begin
+                        c_state = idle;
+                    end
                 end
             endcase
         end
@@ -133,16 +142,43 @@ module rec_tran (
         end
     end
     
+    // o_otn_rx_ack process
+    always @(*) begin
+        if ((r_state == send_good_ack) || (r_state == send_bad_ack)) begin // output good/bad ack
+            case (r_ack_count)
+                2'b00 : o_otn_rx_ack = 1'b0;                       // start bit
+                2'b01 : o_otn_rx_ack = (r_state == send_good_ack); // send a '1' if there was no CRC error!
+                2'b10 : o_otn_rx_ack = 1'b0;                       // stop bit
+                default : o_otn_rx_ack = 1'b1;                     // null case
+            endcase
+        end else begin // idle state
+            o_otn_rx_ack = 1'b1; 
+        end
+    end
+    
+    // c_ack_count process
+    always @(*) begin
+        if (i_rst) begin
+            c_ack_count = 2'b00;
+        end else begin
+            if ((r_state == send_bad_ack) || (r_state == send_good_ack)) begin
+                c_ack_count = r_ack_count + 1;
+            end else begin
+                c_ack_count = 2'b00;
+            end
+        end
+    end
+    
     // Internal FIFO (Takes in parallel mapped OTN data, sends it out rec_tran to demapper)
     // reset FIFO if frame start pattern was broken :(
     axis_data_fifo_rx axis_fifo_inst (
         .s_axis_aresetn  (~(i_rst || (r_state == reset_fifo))),  
         .s_axis_aclk     (i_clk),        
         .s_axis_tvalid   (),    
-        .s_axis_tready   (/* open (don't worry, it WILL be ready)*/),    
+        .s_axis_tready   (/*(don't worry, it WILL be ready)*/),    
         .s_axis_tdata    (),     
         .m_axis_tvalid   (m_fifo_frame_data_valid),    
-        .m_axis_tready   (i_fifo_ready),    
+        .m_axis_tready   (i_tx_fifo_ready),    
         .m_axis_tdata    (o_frame_data), 
         .almost_empty    (/* open */)
     );    
@@ -153,6 +189,7 @@ module rec_tran (
         r_state     <= c_state;
         r_cap_count <= c_cap_count;
         r_bit_count <= c_bit_count;
+        r_ack_count <= c_ack_count;
         for (I = 0; I < 10; I = I + 1) begin 
             if (I == 0) begin otn_tx_data_arr[0] <= i_otn_tx_data;        end 
             else        begin otn_tx_data_arr[I] <= otn_tx_data_arr[I-1]; end
