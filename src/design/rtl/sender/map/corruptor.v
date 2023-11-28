@@ -21,7 +21,20 @@ module corruptor (
     input        i_corrupt_en
 );
 
-integer random_number;
+integer counter = 0;
+
+// Counter used for corrupting data "randomly"
+always @(posedge i_clk) begin : counterProc
+    if(i_rst == 1) begin
+        counter = 0;
+    end else begin
+        if(counter == 255) begin
+            counter = 0;
+        end else begin
+            counter = counter + 1;
+        end
+    end
+end
 
 always @(posedge i_clk) begin : CorruptProc
     if(i_rst == 1) begin
@@ -37,8 +50,7 @@ always @(posedge i_clk) begin : CorruptProc
         end else if((i_col_cnt > 15 || i_row_cnt != 0) && i_pyld_data_valid) begin
             // Corrupt data with random number
             // TODO : Not sure if there's a better way to generate a random output
-            random_number = {$urandom} % 256;
-            o_frame_data        <= i_pyld_data ^ random_number;
+            o_frame_data        <= i_pyld_data ^ counter;
             o_frame_data_valid  <= i_pyld_data_valid;
             o_frame_data_fas    <= i_frame_data_fas;
         end else if(i_pyld_data_valid) begin
