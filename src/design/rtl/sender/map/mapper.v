@@ -1,7 +1,7 @@
 // mapper.v
 // CMPE 670 Project Fall 2023
 // Author(s):
-//   John Evans
+//   John Evans, Eric Falcone
 module mapper (
     // clock and control
     input        i_clk,
@@ -39,6 +39,11 @@ module mapper (
     
     // data req signals
     wire       data_req;
+    
+    // Signals connecting CRC to corruptor
+    wire [7:0]  pyld_data;
+    wire        pyld_data_valid;
+    wire        frame_data_fas;
     
     // Some useful operators:
     // some_signal = {signal1, signal2}; // signal concatenation
@@ -116,13 +121,33 @@ module mapper (
         .i_frame_data_valid (frm_cntrl_frame_data_valid),
         .i_frame_data_fas   (frm_cntrl_frame_data_fas),
         // line interface out
-        .o_frame_data       (o_frame_data),
-        .o_frame_data_valid (o_frame_data_valid),
-        .o_frame_data_fas   (o_frame_data_fas),
+        .o_frame_data       (pyld_data),
+        .o_frame_data_valid (pyld_data_valid),
+        .o_frame_data_fas   (frame_data_fas),
         // hardware interface
         .o_crc_val          (o_crc_val),
         // DEMAP only
         .o_crc_err          (/*open*/)
     );
+
+    // Corruptor Component
+    corruptor corruptor_inst (
+        // clock and control
+        .i_clk              (i_clk),
+        .i_rst              (i_rst),
+        .i_row_cnt          (r_fpc_row_cnt),
+        .i_col_cnt          (r_fpc_col_cnt),
+        // line interface in
+        .i_pyld_data        (pyld_data),
+        .i_pyld_data_valid  (pyld_data_valid),
+        .i_frame_data_fas   (frame_data_fas),
+        // line interface out
+        .o_frame_data       (o_frame_data),
+        .o_frame_data_valid (o_frame_data_valid),
+        .o_frame_data_fas   (o_frame_data_fas),
+        // hardware interface
+        .i_corrupt_en       (i_corrupt_en)
+    );
+    
 
 endmodule
