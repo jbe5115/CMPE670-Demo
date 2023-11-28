@@ -15,7 +15,7 @@ module demapper (
     input        i_frame_data_fas,
     output       o_crc_err,
     // hardware interface
-    output       o_crc_val
+    output [7:0] o_crc_val
 );
 
     // FPC signals

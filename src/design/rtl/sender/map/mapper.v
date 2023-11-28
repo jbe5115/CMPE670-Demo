@@ -10,7 +10,6 @@ module mapper (
     input [7:0]  i_pyld_data,
     input        i_pyld_data_valid,
     output       o_pyld_data_req,    // acts as AXIS ready
-    input        i_fifo_empty,
     // line interface (serial transmitter & line FIFO)
     output [7:0] o_frame_data,
     output       o_frame_data_valid,
@@ -20,7 +19,7 @@ module mapper (
     input        i_line_retrans_req,
     // hardware interface
     input        i_corrupt_en,
-    output       o_crc_val
+    output [7:0] o_crc_val
 );
 
     // quick rundown for making internal signals:
@@ -75,7 +74,7 @@ module mapper (
         // clock and control
         .i_clk                 (i_clk),
         .i_rst                 (i_rst),
-        .i_row_cnt             (c_fpc_row_cnt),
+        //.i_row_cnt             (c_fpc_row_cnt), // unused as of 11/27/23
         .i_col_cnt             (c_fpc_col_cnt),
         // FIFO valids/readys
         .i_pyld_data_valid     (i_pyld_data_valid),

@@ -6,7 +6,7 @@ module data_request (
     // clock and control
     input        i_clk,
     input        i_rst,
-    input [1:0]  i_row_cnt,
+    //input [1:0]  i_row_cnt, // unused as of 11/27/23
     input [10:0] i_col_cnt,
     // FIFO valids/readys
     input        i_pyld_data_valid,

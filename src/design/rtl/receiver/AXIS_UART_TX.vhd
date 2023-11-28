@@ -23,6 +23,7 @@ architecture oh_behave of AXIS_UART_TX is
             CLK_100MHZ         : in std_logic;
             RESET              : in std_logic;
             clk_en_16_x_baud   : in std_logic;
+            enable             : in std_logic;
             data_in            : in std_logic_vector(7 downto 0);
             send_data          : in std_logic;
             UART_TX            : out std_logic;
@@ -43,12 +44,13 @@ begin
 
     -- combinational state update process
     process (r_stateTX, tx_data_complete_edge, valid, RESET) is begin
+        c_stateTX <= r_stateTX;
         if RESET = '1' then
             c_stateTX <= idle;
-        else
+        elsif enable = '1' then
             case (r_stateTX) is
-                when idle         => if (valid = '1') then c_stateTX <= process_data; else c_stateTX <= r_stateTX; end if;
-                when process_data => if (tx_data_complete_edge = '1') then c_stateTX <= idle; else c_stateTX <= r_stateTX; end if;
+                when idle         => if (valid = '1') then c_stateTX <= process_data; end if;
+                when process_data => if (tx_data_complete_edge = '1') then c_stateTX <= idle; end if;
                 when others       => c_stateTX <= idle;
             end case;
         end if;
@@ -82,6 +84,7 @@ begin
     ( CLK_100MHZ         => CLK_100MHZ,
       RESET              => RESET,
       clk_en_16_x_baud   => clk_en_16_x_baud,
+      enable             => enable,
       send_data_complete => tx_data_complete,
       send_data          => send_data,
       data_in            => data_in,

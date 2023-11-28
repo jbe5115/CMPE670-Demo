@@ -4,14 +4,14 @@
 //   John Evans
 module receiver (
     // PC/FPGA INTERFACE
-    input    i_clk,
-    input    i_rst,
-    output   o_uart_tx,
-    input    i_arq_en,
-    output   o_crc_val,
+    input         i_clk,
+    input         i_rst,
+    output        o_uart_tx,
+    input         i_arq_en,
+    output [7:0]  o_crc_val,
     // TRANSMIT INTERFACE
-    input    i_otn_tx_data,
-    input    o_otn_rx_ack
+    input         i_otn_tx_data,
+    input         o_otn_rx_ack
 );
 
     // UART clock control

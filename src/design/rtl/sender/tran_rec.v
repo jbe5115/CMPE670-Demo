@@ -30,7 +30,7 @@ module tran_rec (
     localparam check_ack      = 3'b100;
     localparam trans_complete = 3'b101;
     localparam send_mem_frame = 3'b110;
-    reg [1:0] c_state, r_state;
+    reg [2:0] c_state, r_state;
     
     // total byte count for transmission
     reg [12:0] c_byte_count, r_byte_count;

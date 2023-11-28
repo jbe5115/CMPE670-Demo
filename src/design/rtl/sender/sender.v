@@ -4,15 +4,15 @@
 //   John Evans
 module sender (
     // PC/FPGA INTERFACE
-    input    i_clk,
-    input    i_rst,
-    input    i_uart_rx,
-    input    i_arq_en,
-    input    i_corrupt_en,
-    output   o_crc_val,
+    input          i_clk,
+    input          i_rst,
+    input          i_uart_rx,
+    input          i_arq_en,
+    input          i_corrupt_en,
+    output [7:0]   o_crc_val,
     // TRANSMIT INTERFACE
-    output   o_otn_rx_data,
-    input    i_otn_tx_ack
+    output         o_otn_rx_data,
+    input          i_otn_tx_ack
 );
     // UART clock control
     reg  [11:0]  scount12;
@@ -71,7 +71,7 @@ module sender (
         .m_axis_tvalid   (rx_pyld_data_valid),
         .m_axis_tready   (rx_pyld_data_req),
         .m_axis_tdata    (rx_pyld_data),
-        .almost_empty    (rx_fifo_ae) 
+        .almost_empty    (/* open */) 
     );
     
     // Mapper!
@@ -83,7 +83,6 @@ module sender (
         .i_pyld_data           (rx_pyld_data),
         .i_pyld_data_valid     (rx_pyld_data_valid),
         .o_pyld_data_req       (rx_pyld_data_req),
-        .i_fifo_empty          (rx_fifo_ae),
         // line interface
         .o_frame_data          (map_frame_data),
         .o_frame_data_valid    (map_frame_data_valid),

@@ -29,6 +29,7 @@ entity JEUART_TX is
         CLK_100MHZ         : in std_logic;
         RESET              : in std_logic;
         clk_en_16_x_baud   : in std_logic;
+        enable             : in std_logic;
         data_in            : in std_logic_vector(7 downto 0);
         send_data          : in std_logic;
         UART_TX            : out std_logic;
@@ -52,7 +53,7 @@ begin
   if RESET = '1' then
     sstateTX <= idle;
   elsif CLK_100MHZ'event and CLK_100MHZ = '1' then
-    if clk_en_16_x_baud = '1' then
+    if clk_en_16_x_baud = '1' and enable = '1' then
 	   case sstateTX is
           when idle      => if send_data = '1' then sstateTX <= wstart; end if;
 		  when wstart    => if scount4 = X"F" then sstateTX <= wd0; end if;
@@ -85,7 +86,7 @@ end process;
 process(CLK_100MHZ)
 begin
   if CLK_100MHZ'event and CLK_100MHZ = '1' then
-    if clk_en_16_x_baud = '1' then
+    if clk_en_16_x_baud = '1' and enable = '1' then
       case sstateTX is
            when wstart => UART_TX <= '0';
            when wd0    => UART_TX <= sdata_in(0);
@@ -105,7 +106,7 @@ end process;
 process(CLK_100MHZ)
 begin
   if CLK_100MHZ'event and CLK_100MHZ = '1' then
-    if clk_en_16_x_baud = '1' then
+    if clk_en_16_x_baud = '1' and enable = '1' then
        case sstateTX is
 		   when wstart|wd0|wd1|wd2|wd3|wd4|wd5|wd6|wd7|wstop => scount4 <= scount4 + '1';
 		   when others => scount4 <= (others => '0');
@@ -117,7 +118,7 @@ end process;
 process(CLK_100MHZ)
 begin
   if CLK_100MHZ'event and CLK_100MHZ = '1' then
-    if clk_en_16_x_baud = '1' then
+    if clk_en_16_x_baud = '1' and enable = '1' then
       case sstateTX is
 		   when wstart => 
 		         if scount4 = X"8" then -- Maybe change this??
