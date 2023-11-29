@@ -7,7 +7,6 @@ module receiver (
     input         i_clk,
     input         i_rst,
     output        o_uart_tx,
-    input         i_arq_en,
     output [7:0]  o_crc_val,
     // TRANSMIT INTERFACE
     input         i_otn_tx_data,
@@ -29,27 +28,35 @@ module receiver (
     wire         demap_pyld_fifo_ready; // go to rec_tran
     reg          c_uart_tx_enable, r_uart_tx_enable;
     
+    // REC_TRAN -> DEMAPPER
+    wire [7:0]   rec_tran_frame_data;
+    wire         rec_tran_frame_data_valid;
+    
     // CRC ERROR
     wire         demap_crc_err;
     wire         demap_crc_err_valid;
     
+    // ARQ EN
+    wire         demap_arq_en;
+    wire         demap_arq_en_valid;
+    
     // Serial receiver & ACK Transmitter
     rec_tran rec_tran_inst (
         // clock and control
-        .i_clk              (),
-        .i_rst              (),
-        .i_crc_err          (),
-        .i_crc_err_valid    (),
+        .i_clk              (i_clk),
+        .i_rst              (i_rst),
+        .i_crc_err          (demap_crc_err),
+        .i_crc_err_valid    (demap_crc_err_valid),
         // data to the demapper
-        .o_frame_data       (),
-        .o_frame_data_valid (),
+        .o_frame_data       (rec_tran_frame_data),
+        .o_frame_data_valid (rec_tran_frame_data_valid),
         // input control signals
-        .i_tx_fifo_ready    (),
+        .i_tx_fifo_ready    (demap_pyld_fifo_ready),
+        .i_arq_en           (demap_arq_en),
+        .i_arq_en_valid     (demap_arq_en_valid),
         // data in/out of the FPGA
-        .i_otn_tx_data      (),
-        .o_otn_rx_ack       (),
-        // fpga switch input
-        .i_arq_en   (i_arq_en)
+        .i_otn_tx_data      (i_otn_tx_data),
+        .o_otn_rx_ack       (o_otn_rx_ack)
     );
     
     // DEMAPPER
@@ -61,11 +68,13 @@ module receiver (
         .o_pyld_data           (demap_pyld_data),
         .o_pyld_data_valid     (demap_pyld_data_valid),
         // line interface
-        .i_frame_data          (),
-        .i_frame_data_valid    (),
+        .i_frame_data          (rec_tran_frame_data),
+        .i_frame_data_valid    (rec_tran_frame_data_valid),
         .i_frame_data_fas      (),
         .o_crc_err             (demap_crc_err),
         .o_crc_err_valid       (demap_crc_err_valid),
+        .o_arq_en              (demap_arq_en),
+        .o_arq_en_valid        (demap_arq_en_valid),
         // hardware interface
         .o_crc_val             (o_crc_val)
     );

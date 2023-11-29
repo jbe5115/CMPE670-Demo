@@ -11,13 +11,13 @@ module rec_tran (
     // data to the demapper
     output [7:0] o_frame_data,
     output       o_frame_data_valid,
+    input        i_arq_en,
+    input        i_arq_en_valid,
     // input control signals
     input        i_tx_fifo_ready,
     // data in/out of the FPGA
     input        i_otn_tx_data,
-    output reg   o_otn_rx_ack,
-    // fpga switch input
-    input        i_arq_en
+    output reg   o_otn_rx_ack
 );
 
     // Frame start pattern
@@ -48,6 +48,9 @@ module rec_tran (
     // fifo frame data valid
     wire m_fifo_frame_data_valid;
     wire s_fifo_frame_data_valid; // TODO: use this
+    
+    // arq_en register
+    reg c_arq_en, r_arq_en;
     
     // send_good_ack/send_bad_ack counter
     reg [1:0] c_ack_count, r_ack_count;
@@ -81,7 +84,7 @@ module rec_tran (
                 end
                 get_frame : begin
                     if (r_byte_count == 4158) begin
-                        c_state = (i_arq_en) ? check_crc : idle;
+                        c_state = (r_arq_en) ? check_crc : idle;
                     end
                 end
                 check_crc : begin
@@ -169,6 +172,15 @@ module rec_tran (
         end
     end
     
+    // i_arq_en extraction process
+    always @(*) begin
+        if (i_rst) begin
+            c_arq_en = 1'b0;
+        end else begin
+            c_arq_en = (i_arq_en_valid) ? i_arq_en : r_arq_en;
+        end
+    end
+    
     // Internal FIFO (Takes in parallel mapped OTN data, sends it out rec_tran to demapper)
     // reset FIFO if frame start pattern was broken :(
     axis_data_fifo_rx axis_fifo_inst (
@@ -190,6 +202,7 @@ module rec_tran (
         r_cap_count <= c_cap_count;
         r_bit_count <= c_bit_count;
         r_ack_count <= c_ack_count;
+        r_arq_en    <= c_arq_en;
         for (I = 0; I < 10; I = I + 1) begin 
             if (I == 0) begin otn_tx_data_arr[0] <= i_otn_tx_data;        end 
             else        begin otn_tx_data_arr[I] <= otn_tx_data_arr[I-1]; end

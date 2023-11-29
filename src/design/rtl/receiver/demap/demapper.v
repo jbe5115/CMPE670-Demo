@@ -14,6 +14,9 @@ module demapper (
     input        i_frame_data_valid,
     input        i_frame_data_fas,
     output       o_crc_err,
+    output       o_crc_err_valid,
+    output       o_arq_en,
+    output       o_arq_en_valid,
     // hardware interface
     output [7:0] o_crc_val
 );
@@ -59,13 +62,16 @@ module demapper (
         .i_frame_data_fas   (crc_calc_frame_data_fas),
         // client interface
         .o_pyld_data        (o_pyld_data),
-        .o_pyld_data_valid  (o_pyld_data_valid)
+        .o_pyld_data_valid  (o_pyld_data_valid),
+        // demapper -> rec_tran interface
+        .o_arq_en           (o_arq_en),
+        .o_arq_en_valid     (o_arq_en_valid)
     );
       
     // CRC Calculator & Check
     crc_calc #(
         .MAP_MODE           (0)
-    ) crc_calc_map_inst (
+    ) crc_calc_demap_inst (
         // clock and control
         .i_clk              (i_clk),
         .i_rst              (i_rst),
@@ -82,7 +88,8 @@ module demapper (
         // hardware interface
         .o_crc_val          (o_crc_val),
         // DEMAP only
-        .o_crc_err          (o_crc_err)
+        .o_crc_err          (o_crc_err),
+        .o_crc_err_valid    (o_crc_err_valid)
     );
 
 endmodule

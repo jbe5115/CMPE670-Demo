@@ -21,7 +21,8 @@ module crc_calc # (
     // hardware interface
     output reg [7:0] o_crc_val,
     // DEMAP ONLY
-    output reg       o_crc_err
+    output reg       o_crc_err,
+    output reg       o_crc_err_valid
 );
     reg [7:0] crc_val = 8'b1;
     
@@ -35,6 +36,7 @@ module crc_calc # (
             o_frame_data_fas    <= 1'b0;
             o_crc_val           <= 8'b1;
             o_crc_err           <= 1'b0;
+            o_crc_err_valid     <= 1'b0;
             crc_val             <= 8'b0;       
         end else begin
             // when map mode is 0: same as when map mode is one, but on row 3 column 1040 check the incoming CRC with the currently calculated one.
@@ -46,7 +48,8 @@ module crc_calc # (
                         o_frame_data        <= crc_val;
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas; 
-                        o_crc_val           <= crc_val; 
+                        o_crc_val           <= crc_val;
+                        o_crc_err_valid     <= 1'b1;
                         // Check CRC val and set error state if not equal
                         if(i_frame_data != crc_val) begin
                             o_crc_err       <= 1'b1;
@@ -98,8 +101,9 @@ module crc_calc # (
                 end
                 default : begin
                     // Set error states on hardware if MAP_MODE IS INVALID
-                    o_crc_val <= 8'hf;
-                    o_crc_err <= 1'b0;
+                    o_crc_val       <= 8'hf;
+                    o_crc_err       <= 1'b0;
+                    o_crc_err_valid <= 1'b0;
                 end
             endcase
         end

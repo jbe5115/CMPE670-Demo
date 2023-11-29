@@ -92,6 +92,7 @@ module sender (
         .i_line_retrans_req    (tr_retrans_req),
         // hardware interface
         .i_corrupt_en          (i_corrupt_en),
+        .i_arq_en              (i_arq_en),
         .o_crc_val             (o_crc_val)
     );
     

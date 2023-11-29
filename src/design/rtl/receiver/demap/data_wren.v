@@ -4,27 +4,37 @@
 //  
 module data_wren (
     // clock and control
-    input        i_clk,
-    input        i_rst,
-    input [1:0]  i_row_cnt,
-    input [10:0] i_col_cnt,
+    input            i_clk,
+    input            i_rst,
+    input [1:0]      i_row_cnt,
+    input [10:0]     i_col_cnt,
     // line interface
-    input [7:0]  i_frame_data,
-    input        i_frame_data_valid,
-    input        i_frame_data_fas,
+    input [7:0]      i_frame_data,
+    input            i_frame_data_valid,
+    input            i_frame_data_fas,
     // client interface
     output reg [7:0] o_pyld_data,
-    output reg       o_pyld_data_valid
+    output reg       o_pyld_data_valid,
+    // demapper -> rec_tran interface
+    output reg       o_arq_en,
+    output reg       o_arq_en_valid
 );
  
     // latency should be one clock cycle.
     always @(posedge i_clk) begin
+        o_arq_en       <= 1'b0;
+        o_arq_en_valid <= 1'b0;
         if(i_rst == 1) begin
             o_pyld_data         <= 8'b0;
             o_pyld_data_valid   <= 1'b0;
         end else begin
             // If the current column count is 0 to 15 on any row and the incoming data is valid (it should be) then the output should be invalid.
             if(i_col_cnt < 16 && i_frame_data_valid) begin
+                // check if the current column is 6, if it is, extract the ARQ_EN field
+                if (i_col_cnt == 6 && i_row_cnt == 0) begin
+                    o_arq_en       <= &i_frame_data;
+                    o_arq_en_valid <= 1'b1;
+                end
                 o_pyld_data         <= 8'b0;    // data output shouldn't matter.
                 o_pyld_data_valid   <= 1'b0;
             // if the current column is 1040 on any row, output all zeros
