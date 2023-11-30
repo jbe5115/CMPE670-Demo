@@ -2,6 +2,11 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use IEEE.std_logic_TextIO.all;
+use STD.TextIO.all;
+
+
+
 entity sender_tb is
 end sender_tb;
 
@@ -20,6 +25,10 @@ architecture tb of sender_tb is
     constant  clk_per_sym  :  integer  :=  868;
     constant  symbol_len   :  time     :=  clk_period*clk_per_sym;  --   100  MHz  /  115200  =  868.1  clock/symbol
 
+    -- debug
+    signal dbg_L_END    : boolean := true;
+    signal dbg_data_out : std_ulogic_vector(7 downto 0);
+    signal dbg_data_in  : std_logic_vector(7 downto 0);
 
 begin
 
@@ -49,6 +58,28 @@ begin
     process
         -- TODO: Make more procedures for testing different sender cases
         
+
+        -- read 1031 byte row TODO : make own process
+        procedure read_row          (valid : out std_logic) is begin
+
+        end read_row;
+
+         -- checkers TODO : make into functions
+        procedure check_overhead     (valid : out std_logic) is begin
+
+        end check_overhead;
+
+        procedure check_crc         (valid : out std_logic) is begin
+
+        end check_crc;
+
+        procedure check_payload     (valid : out std_logic) is begin
+
+        end check_payload;
+        
+        -- stim 
+
+
         procedure send_char(
             chr : in unsigned(7 downto 0)
         ) is begin
@@ -79,11 +110,34 @@ begin
             chr := to_integer(unsigned(vect));
             wait for symbol_len/2;
         end rx_char;
+        
+        -- file IO
+        constant payload_file   :  string := "payload.txt";
+        file     stim           : text open READ_MODE is payload_file;
+        variable LR_END         : boolean := TRUE;    
+        variable L_IN           : line;
+        variable byte_out       : std_ulogic_vector(7 downto 0);
     begin
+        sys_rst         <= '1';
+        arq_en          <= '0';
+        corrupt_en      <= '0';
+        i_otn_tx_ack    <= '1';
+        
         wait for 200 ns;
         sys_rst <= '0';
-        wait for 1 us; -- wait for ui_clk_sync_rst
-        -- TODO Put stimulus here
+        wait for 1 us; 
+        while not endfile (stim) loop
+            readline(stim, L_IN);       -- get line
+            while LR_END loop
+                hread(L_IN, byte_out, LR_END);
+                if (LR_END) then 
+                    send_char(unsigned(byte_out));
+                end if;
+                wait for 0 ns;
+            end loop;
+        end loop;
+        
+       wait for 10ms;
 
         assert false
             report "End of simulation"
