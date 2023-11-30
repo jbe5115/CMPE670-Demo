@@ -7,9 +7,6 @@ create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_
 set_property PACKAGE_PIN M18 [get_ports i_rst]
 set_property IOSTANDARD LVCMOS33 [get_ports i_rst]
 
-set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS33} [get_ports i_corrupt_en]
-set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS33} [get_ports i_arq_en]
-
 # ==== LEDs ====
 set_property PACKAGE_PIN H17 [get_ports {o_crc_val[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val[0]}]
@@ -29,15 +26,15 @@ set_property PACKAGE_PIN U16 [get_ports {o_crc_val[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val[7]}]
 
 # ==== UART ====
-set_property -dict {PACKAGE_PIN C4 IOSTANDARD LVCMOS33} [get_ports i_uart_rx]
+set_property -dict {PACKAGE_PIN D4 IOSTANDARD LVCMOS33} [get_ports o_uart_tx]
 
 # ==== I/O Transmission ====
 #JA2
-set_property PACKAGE_PIN D18 [get_ports i_otn_tx_ack]
-set_property IOSTANDARD LVCMOS33 [get_ports i_otn_tx_ack]
+set_property PACKAGE_PIN D18 [get_ports o_otn_rx_ack]
+set_property IOSTANDARD LVCMOS33 [get_ports o_otn_rx_ack]
 #JA1
-set_property PACKAGE_PIN C17 [get_ports o_otn_rx_data]
-set_property IOSTANDARD LVCMOS33 [get_ports o_otn_rx_data]
+set_property PACKAGE_PIN C17 [get_ports i_otn_tx_data]
+set_property IOSTANDARD LVCMOS33 [get_ports i_otn_tx_data]
 
 # Set pullup resistor for input
- set_property PULLUP true [get_ports { i_otn_tx_ack }]
+ set_property PULLUP true [get_ports { i_otn_tx_data }]
