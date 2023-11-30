@@ -21,7 +21,8 @@ module rec_tran (
 );
 
     // Frame start pattern
-    localparam [0:47] FRAME_START = 48'hF6F6F6282828;
+    //48'hF6F6F6282828
+    localparam [0:47] FRAME_START = {8'hF6, 8'hF6, 8'hF6, 8'h28, 8'h28, 8'h28, 8'h28};
 
     // STATE MACHINE
     localparam idle            = 3'b000;
@@ -66,17 +67,19 @@ module rec_tran (
         end else begin
             case (r_state)
                 idle : begin
-                    if (otn_tx_data_arr[9:2] == FRAME_START[0 +: 7]) begin
+                    if (otn_tx_data_arr[9:2] == FRAME_START[0:7]) begin
                         c_state = capture_pattern;
                     end
                 end
                 capture_pattern : begin
                     if (r_bit_count == 3'd7) begin
-                        if (otn_tx_data_arr[9:2] == FRAME_START[r_cap_count +: 7]) begin
-                            c_state = capture_pattern;
-                        end else begin
-                            c_state = reset_fifo;
-                        end
+                        case (r_cap_count)
+                            3'b001 : if (otn_tx_data_arr[9:2] == FRAME_START[8:15])  begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
+                            3'b010 : if (otn_tx_data_arr[9:2] == FRAME_START[16:23]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
+                            3'b011 : if (otn_tx_data_arr[9:2] == FRAME_START[24:31]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
+                            3'b100 : if (otn_tx_data_arr[9:2] == FRAME_START[32:39]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
+                            3'b101 : if (otn_tx_data_arr[9:2] == FRAME_START[40:47]) begin c_state = get_frame;       end else begin c_state = reset_fifo; end
+                        endcase
                     end
                 end
                 reset_fifo : begin

@@ -10,7 +10,7 @@ module receiver (
     output [7:0]  o_crc_val,
     // TRANSMIT INTERFACE
     input         i_otn_tx_data,
-    input         o_otn_rx_ack
+    output        o_otn_rx_ack
 );
 
     // UART clock control
