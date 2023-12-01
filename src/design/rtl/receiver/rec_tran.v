@@ -21,8 +21,7 @@ module rec_tran (
 );
 
     // Frame start pattern
-    //48'hF6F6F6282828
-    localparam [0:47] FRAME_START = {8'hF6, 8'hF6, 8'hF6, 8'h28, 8'h28, 8'h28, 8'h28};
+    localparam [0:47] FRAME_START = 48'hF6F6F6282828;
 
     // STATE MACHINE
     localparam idle            = 3'b000;
@@ -32,10 +31,12 @@ module rec_tran (
     localparam check_crc       = 3'b100;
     localparam send_good_ack   = 3'b101;
     localparam send_bad_ack    = 3'b110;
-    reg [1:0] c_state, r_state;
+    reg [2:0] c_state, r_state;
     
     // 8-bit serial register, plus two more for metastability reduction
-    reg [0:9] otn_tx_data_arr;
+    reg  [0:9] otn_tx_data_arr;
+    // reversed version
+    wire [9:0] otn_tx_data_arr_r;
     
     // capture pattern state counter, counts 1 to 7
     reg [2:0] c_cap_count, r_cap_count;
@@ -59,6 +60,14 @@ module rec_tran (
     // output assignments
     assign o_frame_data_valid = m_fifo_frame_data_valid && !(r_state == capture_pattern);
     
+    // reverse otn_tx_data_arr bits
+    generate
+        genvar i;
+        for (i = 0; i < 10; i = i + 1) begin
+            assign otn_tx_data_arr_r[0] = otn_tx_data_arr[9 - i];
+        end
+    endgenerate
+    
     // state combinational process
     always @(*) begin : StateCombProc
         c_state = r_state;
@@ -67,18 +76,18 @@ module rec_tran (
         end else begin
             case (r_state)
                 idle : begin
-                    if (otn_tx_data_arr[9:2] == FRAME_START[0:7]) begin
+                    if (otn_tx_data_arr_r[9:2] == FRAME_START[0:7]) begin
                         c_state = capture_pattern;
                     end
                 end
                 capture_pattern : begin
                     if (r_bit_count == 3'd7) begin
                         case (r_cap_count)
-                            3'b001 : if (otn_tx_data_arr[9:2] == FRAME_START[8:15])  begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
-                            3'b010 : if (otn_tx_data_arr[9:2] == FRAME_START[16:23]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
-                            3'b011 : if (otn_tx_data_arr[9:2] == FRAME_START[24:31]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
-                            3'b100 : if (otn_tx_data_arr[9:2] == FRAME_START[32:39]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
-                            3'b101 : if (otn_tx_data_arr[9:2] == FRAME_START[40:47]) begin c_state = get_frame;       end else begin c_state = reset_fifo; end
+                            3'b001 : if (otn_tx_data_arr_r[9:2] == FRAME_START[8:15])  begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
+                            3'b010 : if (otn_tx_data_arr_r[9:2] == FRAME_START[16:23]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
+                            3'b011 : if (otn_tx_data_arr_r[9:2] == FRAME_START[24:31]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
+                            3'b100 : if (otn_tx_data_arr_r[9:2] == FRAME_START[32:39]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
+                            default : if (otn_tx_data_arr_r[9:2] == FRAME_START[40:47]) begin c_state = get_frame;       end else begin c_state = reset_fifo; end
                         endcase
                     end
                 end
@@ -189,9 +198,9 @@ module rec_tran (
     axis_data_fifo_rx axis_fifo_inst (
         .s_axis_aresetn  (~(i_rst || (r_state == reset_fifo))),  
         .s_axis_aclk     (i_clk),        
-        .s_axis_tvalid   (),    
+        .s_axis_tvalid   ((r_bit_count == 3'd7)),    
         .s_axis_tready   (/*(don't worry, it WILL be ready)*/),    
-        .s_axis_tdata    (),     
+        .s_axis_tdata    (otn_tx_data_arr_r[9:2]),     
         .m_axis_tvalid   (m_fifo_frame_data_valid),    
         .m_axis_tready   (i_tx_fifo_ready),    
         .m_axis_tdata    (o_frame_data), 
@@ -201,11 +210,12 @@ module rec_tran (
     // register update process
     always @(posedge i_clk) begin : RegProc
         integer I;
-        r_state     <= c_state;
-        r_cap_count <= c_cap_count;
-        r_bit_count <= c_bit_count;
-        r_ack_count <= c_ack_count;
-        r_arq_en    <= c_arq_en;
+        r_state      <= c_state;
+        r_cap_count  <= c_cap_count;
+        r_bit_count  <= c_bit_count;
+        r_byte_count <= c_byte_count;
+        r_ack_count  <= c_ack_count;
+        r_arq_en     <= c_arq_en;
         for (I = 0; I < 10; I = I + 1) begin 
             if (I == 0) begin otn_tx_data_arr[0] <= i_otn_tx_data;        end 
             else        begin otn_tx_data_arr[I] <= otn_tx_data_arr[I-1]; end

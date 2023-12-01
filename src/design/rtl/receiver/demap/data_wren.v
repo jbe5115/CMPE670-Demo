@@ -11,7 +11,7 @@ module data_wren (
     // line interface
     input [7:0]      i_frame_data,
     input            i_frame_data_valid,
-    input            i_frame_data_fas,
+    //input            i_frame_data_fas,
     // client interface
     output reg [7:0] o_pyld_data,
     output reg       o_pyld_data_valid,

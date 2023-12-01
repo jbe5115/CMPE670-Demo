@@ -141,7 +141,9 @@ module sender (
     
     
     always @(posedge i_clk) begin
-        if (scount12 == 8'h36) begin
+        if (i_rst) begin
+            scount12 = 8'h0;
+        end else if (scount12 == 8'h36) begin
             scount12 = 8'h0;
         end else begin
             scount12 = scount12 + 1;

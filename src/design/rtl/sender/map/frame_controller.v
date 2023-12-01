@@ -66,6 +66,10 @@ module frame_controller (
                  o_frame_data        <= i_pyld_data;
                  o_frame_data_valid  <= i_pyld_data_valid; 
                  o_frame_data_fas    <= 1'b0;
+            end else begin
+                o_frame_data         <= i_pyld_data;
+                o_frame_data_valid   <= i_pyld_data_valid;
+                o_frame_data_fas     <= 1'b0;
             end
         end
      end

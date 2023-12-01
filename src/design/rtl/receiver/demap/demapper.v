@@ -42,7 +42,7 @@ module demapper (
     fpc fpc_map_inst (
         .i_clk              (i_clk),
         .i_rst              (i_rst),
-        .i_valid            (i_pyld_data_valid & data_req), // FIXME
+        .i_valid            (i_frame_data_valid),
         .i_line_retrans_req (1'b0),
         
         .o_row_cnt          (c_fpc_row_cnt),
@@ -59,7 +59,7 @@ module demapper (
         // line interface
         .i_frame_data       (crc_calc_frame_data),
         .i_frame_data_valid (crc_calc_frame_data_valid),
-        .i_frame_data_fas   (crc_calc_frame_data_fas),
+        //.i_frame_data_fas   (crc_calc_frame_data_fas),
         // client interface
         .o_pyld_data        (o_pyld_data),
         .o_pyld_data_valid  (o_pyld_data_valid),

@@ -43,7 +43,7 @@ architecture oh_behave of AXIS_UART_TX is
 begin
 
     -- combinational state update process
-    process (r_stateTX, tx_data_complete_edge, valid, RESET) is begin
+    process (r_stateTX, tx_data_complete_edge, valid, RESET, enable) is begin
         c_stateTX <= r_stateTX;
         if RESET = '1' then
             c_stateTX <= idle;

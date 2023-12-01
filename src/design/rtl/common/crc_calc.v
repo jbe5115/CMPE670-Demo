@@ -71,6 +71,10 @@ module crc_calc # (
                         crc_val             <= 8'b1;
                         o_crc_val           <= 8'b1;
                         o_crc_err           <= 1'b0;
+                    end else begin
+                        o_frame_data        <= i_frame_data;
+                        o_frame_data_valid  <= i_frame_data_valid;
+                        o_frame_data_fas    <= i_frame_data_fas;                        
                     end
                 end
                 // when map mode is 1: calculate the CRC on every valid clock cycle that contains payload data (column count is between 16 and 1039 on any row)
@@ -97,6 +101,10 @@ module crc_calc # (
                         crc_val             <= 8'b1;
                         o_crc_val           <= 8'b1;
                         o_crc_err           <= 1'b0;
+                    end else begin
+                        o_frame_data        <= i_frame_data;
+                        o_frame_data_valid  <= i_frame_data_valid;
+                        o_frame_data_fas    <= i_frame_data_fas;                        
                     end
                 end
                 default : begin

@@ -50,10 +50,10 @@ module receiver (
         // data to the demapper
         .o_frame_data       (rec_tran_frame_data),
         .o_frame_data_valid (rec_tran_frame_data_valid),
-        // input control signals
-        .i_tx_fifo_ready    (demap_pyld_fifo_ready),
         .i_arq_en           (demap_arq_en),
         .i_arq_en_valid     (demap_arq_en_valid),
+        // input control signals
+        .i_tx_fifo_ready    (demap_pyld_fifo_ready),
         // data in/out of the FPGA
         .i_otn_tx_data      (i_otn_tx_data),
         .o_otn_rx_ack       (o_otn_rx_ack)
@@ -70,7 +70,7 @@ module receiver (
         // line interface
         .i_frame_data          (rec_tran_frame_data),
         .i_frame_data_valid    (rec_tran_frame_data_valid),
-        .i_frame_data_fas      (),
+        .i_frame_data_fas      (1'b0), // changeme?
         .o_crc_err             (demap_crc_err),
         .o_crc_err_valid       (demap_crc_err_valid),
         .o_arq_en              (demap_arq_en),
@@ -122,7 +122,9 @@ module receiver (
     end
     
     always @(posedge i_clk) begin
-        if (scount12 == 8'h36) begin
+        if (i_rst) begin
+            scount12 = 8'h0;
+        end else if (scount12 == 8'h36) begin
             scount12 = 8'h0;
         end else begin
             scount12 = scount12 + 1;
