@@ -15,8 +15,8 @@ module sender (
     input          i_otn_tx_ack
 );
     // UART clock control
-    reg  [11:0]  scount12;
-    wire         sclk_en_16_x_baud;
+    reg  [11:0]  scount12 = 0;
+    reg          sclk_en_16_x_baud;
     
     // UART_RX -> RX FIFO
     wire [7:0]   rx_data;
@@ -140,16 +140,19 @@ module sender (
     );
     
     
-    always @(posedge i_clk) begin
+    always @(posedge i_clk, i_rst) begin
         if (i_rst) begin
             scount12 = 8'h0;
+            sclk_en_16_x_baud = 1'b0;
         end else if (scount12 == 8'h36) begin
             scount12 = 8'h0;
+            sclk_en_16_x_baud = 1'b0;
         end else begin
             scount12 = scount12 + 1;
+            sclk_en_16_x_baud = 1'b0;
         end
     end
     
-    assign sclk_en_16_x_baud = (scount12 == 8'h36);
+    // assign sclk_en_16_x_baud = (scount12 == 8'h36);
 
 endmodule
