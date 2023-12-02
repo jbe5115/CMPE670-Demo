@@ -146,7 +146,7 @@ module sender (
             sclk_en_16_x_baud = 1'b0;
         end else if (scount12 == 8'h36) begin
             scount12 = 8'h0;
-            sclk_en_16_x_baud = 1'b0;
+            sclk_en_16_x_baud = 1'b1;
         end else begin
             scount12 = scount12 + 1;
             sclk_en_16_x_baud = 1'b0;
