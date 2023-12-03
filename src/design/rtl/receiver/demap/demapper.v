@@ -43,7 +43,7 @@ module demapper (
         .i_clk              (i_clk),
         .i_rst              (i_rst),
         .i_valid            (i_frame_data_valid),
-        .i_line_retrans_req (1'b0),
+        .i_enable           (1'b1),
         
         .o_row_cnt          (c_fpc_row_cnt),
         .o_col_cnt          (c_fpc_col_cnt)

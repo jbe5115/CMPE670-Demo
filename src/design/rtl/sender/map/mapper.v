@@ -46,20 +46,27 @@ module mapper (
     wire        pyld_data_valid;
     wire        frame_data_fas;
     
+    wire        c_map_enable;
+    reg         r_map_enable;
+    
     // Some useful operators:
     // some_signal = {signal1, signal2}; // signal concatenation
     // somesignal[7:0] = {8{1'b1}};      // replication operator. Assigns 8 1's to that signal.
     // somesignal[0 +: 7]                // indexed part select. wont need to be used very often but very useful, i suggest looking into how it works
     
+    // ensure that BOTH FIFOs on the line side are ready, and the RX FIFO!!
     assign o_pyld_data_req = data_req;
+    
+    assign c_map_enable = i_line_fifo_ready && i_tran_rec_fifo_ready && i_pyld_data_valid && !i_line_retrans_req;
     
     // -- Basic structure for a clocked process --
     always @(posedge i_clk) begin
         // fpc row & col cnt registers
-        r_fpc_row_cnt <= c_fpc_row_cnt;
-        r_fpc_col_cnt <= c_fpc_col_cnt;
+        r_fpc_row_cnt    <= c_fpc_row_cnt;
+        r_fpc_col_cnt    <= c_fpc_col_cnt;
         r_fpc_row_cnt_d1 <= r_fpc_row_cnt;
         r_fpc_col_cnt_d1 <= r_fpc_col_cnt;
+        r_map_enable     <= c_map_enable;
     end
     
     // Frame position counter
@@ -67,8 +74,7 @@ module mapper (
         .i_clk              (i_clk),
         .i_rst              (i_rst),
         .i_valid            (i_pyld_data_valid & data_req),
-        .i_line_retrans_req (i_line_retrans_req),
-        
+        .i_enable           (r_map_enable),
         .o_row_cnt          (c_fpc_row_cnt),
         .o_col_cnt          (c_fpc_col_cnt)
     );
@@ -95,6 +101,7 @@ module mapper (
         // clock and control
         .i_clk              (i_clk),
         .i_rst              (i_rst),
+        .i_enable           (r_map_enable),
         .i_row_cnt          (c_fpc_row_cnt),
         .i_col_cnt          (c_fpc_col_cnt),
         // client interface
@@ -115,8 +122,8 @@ module mapper (
         // clock and control
         .i_clk              (i_clk),
         .i_rst              (i_rst),
-        .i_row_cnt          (r_fpc_row_cnt_d1),
-        .i_col_cnt          (r_fpc_col_cnt_d1),
+        .i_row_cnt          (r_fpc_row_cnt),
+        .i_col_cnt          (r_fpc_col_cnt),
         // line interface in
         .i_frame_data       (frm_cntrl_frame_data),
         .i_frame_data_valid (frm_cntrl_frame_data_valid),
@@ -137,8 +144,8 @@ module mapper (
         // clock and control
         .i_clk              (i_clk),
         .i_rst              (i_rst),
-        .i_row_cnt          (r_fpc_row_cnt),
-        .i_col_cnt          (r_fpc_col_cnt),
+        .i_row_cnt          (r_fpc_row_cnt_d1),
+        .i_col_cnt          (r_fpc_col_cnt_d1),
         // line interface in
         .i_pyld_data        (pyld_data),
         .i_pyld_data_valid  (pyld_data_valid),

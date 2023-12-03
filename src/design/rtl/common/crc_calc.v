@@ -37,7 +37,7 @@ module crc_calc # (
             o_crc_val           <= 8'b1;
             o_crc_err           <= 1'b0;
             o_crc_err_valid     <= 1'b0;
-            crc_val             <= 8'b0;       
+            crc_val             <= 8'hFF;       
         end else begin
             // when map mode is 0: same as when map mode is one, but on row 3 column 1040 check the incoming CRC with the currently calculated one.
             //                     if they dont match, set crc error. it should be reset on the next valid cycle (which is the start of a new frame).
@@ -68,13 +68,14 @@ module crc_calc # (
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas;
                         // Reset hardware interface
-                        crc_val             <= 8'b1;
-                        o_crc_val           <= 8'b1;
+                        crc_val             <= 8'hFF;
+                        o_crc_val           <= 8'hFF;
                         o_crc_err           <= 1'b0;
                     end else begin
                         o_frame_data        <= i_frame_data;
                         o_frame_data_valid  <= i_frame_data_valid;
-                        o_frame_data_fas    <= i_frame_data_fas;                        
+                        o_frame_data_fas    <= i_frame_data_fas;
+                        o_crc_val           <= crc_val;                     
                     end
                 end
                 // when map mode is 1: calculate the CRC on every valid clock cycle that contains payload data (column count is between 16 and 1039 on any row)
@@ -98,18 +99,19 @@ module crc_calc # (
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas;
                         // Reset hardware interface
-                        crc_val             <= 8'b1;
-                        o_crc_val           <= 8'b1;
+                        crc_val             <= 8'hFF;
+                        o_crc_val           <= 8'hFF;
                         o_crc_err           <= 1'b0;
                     end else begin
                         o_frame_data        <= i_frame_data;
                         o_frame_data_valid  <= i_frame_data_valid;
-                        o_frame_data_fas    <= i_frame_data_fas;                        
+                        o_frame_data_fas    <= i_frame_data_fas;
+                        o_crc_val           <= crc_val;                   
                     end
                 end
                 default : begin
                     // Set error states on hardware if MAP_MODE IS INVALID
-                    o_crc_val       <= 8'hf;
+                    o_crc_val       <= 8'hFF;
                     o_crc_err       <= 1'b0;
                     o_crc_err_valid <= 1'b0;
                 end

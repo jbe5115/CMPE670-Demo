@@ -6,6 +6,7 @@ module frame_controller (
     // clock and control
     input            i_clk,
     input            i_rst,
+    input            i_enable,
     input [1:0]      i_row_cnt,
     input [10:0]     i_col_cnt,
     // client interface
@@ -25,7 +26,7 @@ module frame_controller (
             o_frame_data        <= 8'b0;
             o_frame_data_valid  <= 1'b0; 
             o_frame_data_fas    <= 1'b0;
-        end else begin
+        end else if (i_enable) begin
             // If the current column count is 0 to 15 (on rows 1 - 3) and the incoming data is invalid (it should be) then output all zeros.
             if(i_row_cnt > 0 && i_col_cnt < 16 && !i_pyld_data_valid) begin
                 o_frame_data        <= 8'b0;
@@ -71,6 +72,10 @@ module frame_controller (
                 o_frame_data_valid   <= i_pyld_data_valid;
                 o_frame_data_fas     <= 1'b0;
             end
+        end else begin
+            o_frame_data         <= i_pyld_data;
+            o_frame_data_valid   <= i_pyld_data_valid;
+            o_frame_data_fas     <= 1'b0;            
         end
      end
 endmodule

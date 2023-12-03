@@ -6,6 +6,7 @@ module tran_rec (
     // clock and control
     input       i_clk,
     input       i_rst,
+    input       i_sclk_en_16_x_baud,
     // data from/to the mapper
     input [7:0] i_frame_data,
     input       i_frame_data_valid,
@@ -21,6 +22,9 @@ module tran_rec (
     // fpga switch input
     input       i_arq_en
 );
+
+    // clock control
+    reg [3:0]   scount4;
 
     // STATE MACHINE
     localparam idle           = 3'b000;
@@ -60,6 +64,9 @@ module tran_rec (
     wire       s_fifo_ready, m_fifo_ready;
     wire       m_fifo_data_valid;
     wire [7:0] m_fifo_data;
+    
+    // Baud rate enable indicator
+    wire       baud_en;
    
     // direct output assignments
     assign o_send_complete  = (r_state == trans_complete);
@@ -68,7 +75,8 @@ module tran_rec (
     assign o_fifo_ready     = s_fifo_ready;
     assign o_otn_rx_data    = r_otn_rx_data;
     
-    assign m_fifo_ready = ((r_state == send_frame) || (r_state == send_mem_frame)) && (r_bit_count == 3'd7);
+    assign m_fifo_ready = ((r_state == send_frame) || (r_state == send_mem_frame)) && (r_bit_count == 3'd7) && baud_en;
+    assign baud_en  = i_sclk_en_16_x_baud && (scount4 == 4'hF);
 
     // RX FIFO (Takes in mapped OTN data, sends it out of FPGA thru state machine)
     axis_data_fifo_rx axis_fifo_inst (
@@ -96,7 +104,7 @@ module tran_rec (
                     end
                 end
                 send_frame : begin
-                    if (r_byte_count == 4164) begin // frame is done transmitting?
+                    if (r_byte_count == 4165) begin // frame is done transmitting?
                         if (i_arq_en) begin// is ARQ enabled??
                             c_state = ack_wait;
                         end else begin
@@ -120,7 +128,7 @@ module tran_rec (
                     c_state = idle;
                 end
                 send_mem_frame : begin
-                    if (r_byte_count == 4164) begin // mem frame is done transmitting?
+                    if (r_byte_count == 4165) begin // mem frame is done transmitting?
                         c_state = ack_wait;
                     end
                 end
@@ -139,10 +147,12 @@ module tran_rec (
             c_byte_count = 13'd0;
             c_current_byte = 8'b0;
         end else begin
-            if ((r_state == send_frame) || (r_state == send_mem_frame)) begin
-                if (m_fifo_ready && m_fifo_data_valid && (r_bit_count == 3'd7)) begin
-                    c_byte_count   = r_byte_count + 1;
-                    c_current_byte = m_fifo_data;
+            if ((r_state == send_frame) || (r_state == send_mem_frame)) begin // condition 1
+                if (m_fifo_ready && (m_fifo_data_valid || (r_byte_count == 4164)) && (r_bit_count == 3'd7)) begin // condition 2
+                    if (baud_en) begin // condition 3
+                        c_byte_count   = r_byte_count + 1;
+                        c_current_byte = m_fifo_data;
+                    end
                 end
             end else begin
                 c_byte_count = 13'd0;
@@ -202,10 +212,25 @@ module tran_rec (
     always @(*) begin : BitCountProc
         c_bit_count = r_bit_count;
         if (i_rst) begin
-            c_bit_count = 3'd7;
-        end else begin
+            c_bit_count = 3'd0;
+        end else if (baud_en) begin
             if ((r_state == send_frame) || (r_state == send_mem_frame)) begin
                 c_bit_count = r_bit_count + 1;
+            end else begin
+                c_bit_count = 3'd0;
+            end
+        end
+    end
+    
+    // scount4 counter process
+    always @(posedge i_clk) begin
+        if (i_rst) begin
+            scount4 <= 0;
+        end else if (i_sclk_en_16_x_baud) begin
+            if ((r_state == send_frame) || (r_state == send_mem_frame)) begin
+                scount4 <= scount4 + 1;
+            end else begin
+                scount4 <= 0;
             end
         end
     end

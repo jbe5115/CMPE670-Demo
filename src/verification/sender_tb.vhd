@@ -114,8 +114,8 @@ begin
         -- file IO
         constant payload_file   :  string := "payload.txt";
         file     stim           : text open READ_MODE is payload_file;
-        variable LR_END         : boolean := TRUE;    
         variable L_IN           : line;
+        variable EOL_N          : boolean := TRUE;    
         variable byte_out       : std_ulogic_vector(7 downto 0);
     begin
         sys_rst         <= '1';
@@ -126,15 +126,15 @@ begin
         wait for 200 ns;
         sys_rst <= '0';
         wait for 1 us; 
-        while not endfile (stim) loop
-            readline(stim, L_IN);       -- get line
-            while LR_END loop
-                hread(L_IN, byte_out, LR_END);
-                if (LR_END) then 
-                    send_char(unsigned(byte_out));
-                end if;
+        while not endfile(stim) loop
+            readline(stim, L_IN);          -- get line
+            hread(L_IN, byte_out, EOL_N); -- get first byte
+            while (EOL_N = true) loop
+                send_char(unsigned(byte_out));
+                hread(L_IN, byte_out, EOL_N);
                 wait for 0 ns;
             end loop;
+            EOL_N := true;
         end loop;
         
        wait for 10ms;

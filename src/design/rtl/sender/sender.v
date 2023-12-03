@@ -121,8 +121,9 @@ module sender (
     // TODO: Instantiate tran_rec
     tran_rec tran_rec_inst (
         // clock and control
-        .i_clk              (i_clk),
-        .i_rst              (i_rst),
+        .i_clk               (i_clk),
+        .i_rst               (i_rst),
+        .i_sclk_en_16_x_baud (sclk_en_16_x_baud),
         // data from/to the mapper OR line FIFO
         .i_frame_data       (tr_frame_data),
         .i_frame_data_valid (tr_frame_data_valid),
@@ -140,7 +141,7 @@ module sender (
     );
     
     
-    always @(posedge i_clk, i_rst) begin
+    always @(posedge i_clk) begin
         if (i_rst) begin
             scount12 = 8'h0;
             sclk_en_16_x_baud = 1'b0;
