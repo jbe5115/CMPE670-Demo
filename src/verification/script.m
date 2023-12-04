@@ -4,7 +4,7 @@ clear all
 clc
 
 % Read image
-filename = 'something.pgm'; %CHANGEME
+filename = 'mario.pgm'; %CHANGEME
 im_orig = imread(filename);
 numRows = 64;
 numCols = 64;
@@ -15,7 +15,7 @@ delete(instrfind);
 
 % Create the sender serial port
 % NOTE: THIS SERIAL PORT MAY NEED TO BE CHANGED!!
-serialPort1 = serial('COM6', 'BaudRate', 115200, 'DataBits', 8, 'Parity', ...
+serialPort1 = serial('COM11', 'BaudRate', 115200, 'DataBits', 8, 'Parity', ...
     'none', 'StopBit', 1, 'OutputBufferSize', imgSize, 'InputBufferSize', imgSize);
 
 % Create the receiver serial port
