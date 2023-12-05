@@ -39,7 +39,9 @@ module demapper (
     end
     
     // Frame position counter
-    fpc fpc_map_inst (
+    fpc #(
+        .MAP_MODE           (0)
+    ) fpc_demap_inst (
         .i_clk              (i_clk),
         .i_rst              (i_rst),
         .i_valid            (i_frame_data_valid),

@@ -25,6 +25,8 @@ module tran_rec (
 
     // clock control
     reg [3:0]   scount4;
+    // Baud rate enable indicator
+    wire       baud_en;
 
     // STATE MACHINE
     localparam idle           = 3'b000;
@@ -64,9 +66,6 @@ module tran_rec (
     wire       s_fifo_ready, m_fifo_ready;
     wire       m_fifo_data_valid;
     wire [7:0] m_fifo_data;
-    
-    // Baud rate enable indicator
-    wire       baud_en;
    
     // direct output assignments
     assign o_send_complete  = (r_state == trans_complete);

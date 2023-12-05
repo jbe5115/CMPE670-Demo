@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="355527366853618fs"></ZoomStartTime>
-      <ZoomEndTime time="355527479697152fs"></ZoomEndTime>
-      <Cursor1Time time="355527430892000fs"></Cursor1Time>
+      <ZoomStartTime time="6020050753000fs"></ZoomStartTime>
+      <ZoomEndTime time="6678050753001fs"></ZoomEndTime>
+      <Cursor1Time time="6417050753000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="239"></NameColumnWidth>
-      <ValueColumnWidth column_width="66"></ValueColumnWidth>
+      <NameColumnWidth column_width="227"></NameColumnWidth>
+      <ValueColumnWidth column_width="58"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="7" />
+   <WVObjectSize size="8" />
    <wvobject fp_name="/sender_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -139,7 +139,6 @@
       <wvobject fp_name="group109" type="group">
          <obj_property name="label">MAPPER</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group40" type="group">
             <obj_property name="label">FPC_MAP</obj_property>
             <obj_property name="DisplayName">label</obj_property>
@@ -166,13 +165,13 @@
                <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             </wvobject>
             <wvobject fp_name="/sender_tb/sender_inst/mapper_inst/fpc_map_inst/row_cnt" type="array">
-               <obj_property name="ElementShortName">row_cnt[31:0]</obj_property>
-               <obj_property name="ObjectShortName">row_cnt[31:0]</obj_property>
+               <obj_property name="ElementShortName">row_cnt[1:0]</obj_property>
+               <obj_property name="ObjectShortName">row_cnt[1:0]</obj_property>
                <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             </wvobject>
             <wvobject fp_name="/sender_tb/sender_inst/mapper_inst/fpc_map_inst/col_cnt" type="array">
-               <obj_property name="ElementShortName">col_cnt[31:0]</obj_property>
-               <obj_property name="ObjectShortName">col_cnt[31:0]</obj_property>
+               <obj_property name="ElementShortName">col_cnt[10:0]</obj_property>
+               <obj_property name="ObjectShortName">col_cnt[10:0]</obj_property>
                <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             </wvobject>
          </wvobject>
@@ -215,7 +214,6 @@
          <wvobject fp_name="group58" type="group">
             <obj_property name="label">FRM_CTRL</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/sender_tb/clk" type="logic">
                <obj_property name="ElementShortName">clk</obj_property>
                <obj_property name="ObjectShortName">clk</obj_property>
@@ -261,7 +259,6 @@
          <wvobject fp_name="group72" type="group">
             <obj_property name="label">CRC_CALC_MAP</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/sender_tb/sender_inst/mapper_inst/crc_calc_map_inst/i_row_cnt" type="array">
                <obj_property name="ElementShortName">i_row_cnt[1:0]</obj_property>
                <obj_property name="ObjectShortName">i_row_cnt[1:0]</obj_property>
@@ -500,9 +497,11 @@
       <wvobject fp_name="group146" type="group">
          <obj_property name="label">TRAN_REC</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group553" type="group">
             <obj_property name="label">axis fifo</obj_property>
             <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/sender_tb/sender_inst/tran_rec_inst/axis_fifo_inst/s_axis_aresetn" type="logic">
                <obj_property name="ElementShortName">s_axis_aresetn</obj_property>
                <obj_property name="ObjectShortName">s_axis_aresetn</obj_property>
@@ -530,6 +529,10 @@
             <wvobject fp_name="/sender_tb/sender_inst/tran_rec_inst/axis_fifo_inst/m_axis_tready" type="logic">
                <obj_property name="ElementShortName">m_axis_tready</obj_property>
                <obj_property name="ObjectShortName">m_axis_tready</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/sender_inst/tran_rec_inst/baud_en" type="logic">
+               <obj_property name="ElementShortName">baud_en</obj_property>
+               <obj_property name="ObjectShortName">baud_en</obj_property>
             </wvobject>
             <wvobject fp_name="/sender_tb/sender_inst/tran_rec_inst/axis_fifo_inst/m_axis_tdata" type="array">
                <obj_property name="ElementShortName">m_axis_tdata[7:0]</obj_property>
@@ -665,10 +668,6 @@
          <wvobject fp_name="/sender_tb/sender_inst/tran_rec_inst/m_fifo_data" type="array">
             <obj_property name="ElementShortName">m_fifo_data[7:0]</obj_property>
             <obj_property name="ObjectShortName">m_fifo_data[7:0]</obj_property>
-         </wvobject>
-         <wvobject fp_name="/sender_tb/sender_inst/tran_rec_inst/baud_en" type="logic">
-            <obj_property name="ElementShortName">baud_en</obj_property>
-            <obj_property name="ObjectShortName">baud_en</obj_property>
          </wvobject>
          <wvobject fp_name="/sender_tb/sender_inst/tran_rec_inst/idle" type="array">
             <obj_property name="ElementShortName">idle[2:0]</obj_property>
@@ -810,6 +809,609 @@
       <wvobject fp_name="/sender_tb/sender_inst/lf_ready" type="logic">
          <obj_property name="ElementShortName">lf_ready</obj_property>
          <obj_property name="ObjectShortName">lf_ready</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group218" type="group">
+      <obj_property name="label">RECEIVER</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="group257" type="group">
+         <obj_property name="label">rec_tran</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="group3858" type="group">
+            <obj_property name="label">rec tran fifo</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/s_axis_aresetn" type="logic">
+               <obj_property name="ElementShortName">s_axis_aresetn</obj_property>
+               <obj_property name="ObjectShortName">s_axis_aresetn</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/s_axis_aclk" type="logic">
+               <obj_property name="ElementShortName">s_axis_aclk</obj_property>
+               <obj_property name="ObjectShortName">s_axis_aclk</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/s_axis_tvalid" type="logic">
+               <obj_property name="ElementShortName">s_axis_tvalid</obj_property>
+               <obj_property name="ObjectShortName">s_axis_tvalid</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/s_axis_tready" type="logic">
+               <obj_property name="ElementShortName">s_axis_tready</obj_property>
+               <obj_property name="ObjectShortName">s_axis_tready</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/s_axis_tdata" type="array">
+               <obj_property name="ElementShortName">s_axis_tdata[7:0]</obj_property>
+               <obj_property name="ObjectShortName">s_axis_tdata[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/m_axis_tvalid" type="logic">
+               <obj_property name="ElementShortName">m_axis_tvalid</obj_property>
+               <obj_property name="ObjectShortName">m_axis_tvalid</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/m_axis_tready" type="logic">
+               <obj_property name="ElementShortName">m_axis_tready</obj_property>
+               <obj_property name="ObjectShortName">m_axis_tready</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/m_axis_tdata" type="array">
+               <obj_property name="ElementShortName">m_axis_tdata[7:0]</obj_property>
+               <obj_property name="ObjectShortName">m_axis_tdata[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/axis_fifo_inst/almost_empty" type="logic">
+               <obj_property name="ElementShortName">almost_empty</obj_property>
+               <obj_property name="ObjectShortName">almost_empty</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_rst" type="logic">
+            <obj_property name="ElementShortName">i_rst</obj_property>
+            <obj_property name="ObjectShortName">i_rst</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_sclk_en_16_x_baud" type="logic">
+            <obj_property name="ElementShortName">i_sclk_en_16_x_baud</obj_property>
+            <obj_property name="ObjectShortName">i_sclk_en_16_x_baud</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_crc_err" type="logic">
+            <obj_property name="ElementShortName">i_crc_err</obj_property>
+            <obj_property name="ObjectShortName">i_crc_err</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_crc_err_valid" type="logic">
+            <obj_property name="ElementShortName">i_crc_err_valid</obj_property>
+            <obj_property name="ObjectShortName">i_crc_err_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_clk" type="logic">
+            <obj_property name="ElementShortName">i_clk</obj_property>
+            <obj_property name="ObjectShortName">i_clk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/o_frame_data" type="array">
+            <obj_property name="ElementShortName">o_frame_data[7:0]</obj_property>
+            <obj_property name="ObjectShortName">o_frame_data[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/o_frame_data_valid" type="logic">
+            <obj_property name="ElementShortName">o_frame_data_valid</obj_property>
+            <obj_property name="ObjectShortName">o_frame_data_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_arq_en" type="logic">
+            <obj_property name="ElementShortName">i_arq_en</obj_property>
+            <obj_property name="ObjectShortName">i_arq_en</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_arq_en_valid" type="logic">
+            <obj_property name="ElementShortName">i_arq_en_valid</obj_property>
+            <obj_property name="ObjectShortName">i_arq_en_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_tx_fifo_ready" type="logic">
+            <obj_property name="ElementShortName">i_tx_fifo_ready</obj_property>
+            <obj_property name="ObjectShortName">i_tx_fifo_ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/i_otn_tx_data" type="logic">
+            <obj_property name="ElementShortName">i_otn_tx_data</obj_property>
+            <obj_property name="ObjectShortName">i_otn_tx_data</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/baud_en" type="logic">
+            <obj_property name="ElementShortName">baud_en</obj_property>
+            <obj_property name="ObjectShortName">baud_en</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/o_otn_rx_ack" type="logic">
+            <obj_property name="ElementShortName">o_otn_rx_ack</obj_property>
+            <obj_property name="ObjectShortName">o_otn_rx_ack</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/scount4" type="array">
+            <obj_property name="ElementShortName">scount4[3:0]</obj_property>
+            <obj_property name="ObjectShortName">scount4[3:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/c_state" type="array">
+            <obj_property name="ElementShortName">c_state[2:0]</obj_property>
+            <obj_property name="ObjectShortName">c_state[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/r_state" type="array">
+            <obj_property name="ElementShortName">r_state[2:0]</obj_property>
+            <obj_property name="ObjectShortName">r_state[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/otn_tx_data_arr" type="array">
+            <obj_property name="ElementShortName">otn_tx_data_arr[0:9]</obj_property>
+            <obj_property name="ObjectShortName">otn_tx_data_arr[0:9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/otn_tx_data_arr_r" type="array">
+            <obj_property name="ElementShortName">otn_tx_data_arr_r[9:0]</obj_property>
+            <obj_property name="ObjectShortName">otn_tx_data_arr_r[9:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/c_cap_count" type="array">
+            <obj_property name="ElementShortName">c_cap_count[2:0]</obj_property>
+            <obj_property name="ObjectShortName">c_cap_count[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/r_cap_count" type="array">
+            <obj_property name="ElementShortName">r_cap_count[2:0]</obj_property>
+            <obj_property name="ObjectShortName">r_cap_count[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/c_bit_count" type="array">
+            <obj_property name="ElementShortName">c_bit_count[2:0]</obj_property>
+            <obj_property name="ObjectShortName">c_bit_count[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/r_bit_count" type="array">
+            <obj_property name="ElementShortName">r_bit_count[2:0]</obj_property>
+            <obj_property name="ObjectShortName">r_bit_count[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/c_byte_count" type="array">
+            <obj_property name="ElementShortName">c_byte_count[12:0]</obj_property>
+            <obj_property name="ObjectShortName">c_byte_count[12:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/r_byte_count" type="array">
+            <obj_property name="ElementShortName">r_byte_count[12:0]</obj_property>
+            <obj_property name="ObjectShortName">r_byte_count[12:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/m_fifo_frame_data_valid" type="logic">
+            <obj_property name="ElementShortName">m_fifo_frame_data_valid</obj_property>
+            <obj_property name="ObjectShortName">m_fifo_frame_data_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/s_fifo_frame_data_valid" type="logic">
+            <obj_property name="ElementShortName">s_fifo_frame_data_valid</obj_property>
+            <obj_property name="ObjectShortName">s_fifo_frame_data_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/c_arq_en" type="logic">
+            <obj_property name="ElementShortName">c_arq_en</obj_property>
+            <obj_property name="ObjectShortName">c_arq_en</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/r_arq_en" type="logic">
+            <obj_property name="ElementShortName">r_arq_en</obj_property>
+            <obj_property name="ObjectShortName">r_arq_en</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/c_ack_count" type="array">
+            <obj_property name="ElementShortName">c_ack_count[1:0]</obj_property>
+            <obj_property name="ObjectShortName">c_ack_count[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/r_ack_count" type="array">
+            <obj_property name="ElementShortName">r_ack_count[1:0]</obj_property>
+            <obj_property name="ObjectShortName">r_ack_count[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/FRAME_START" type="array">
+            <obj_property name="ElementShortName">FRAME_START[47:0]</obj_property>
+            <obj_property name="ObjectShortName">FRAME_START[47:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/idle" type="array">
+            <obj_property name="ElementShortName">idle[2:0]</obj_property>
+            <obj_property name="ObjectShortName">idle[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/capture_pattern" type="array">
+            <obj_property name="ElementShortName">capture_pattern[2:0]</obj_property>
+            <obj_property name="ObjectShortName">capture_pattern[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/reset_fifo" type="array">
+            <obj_property name="ElementShortName">reset_fifo[2:0]</obj_property>
+            <obj_property name="ObjectShortName">reset_fifo[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/get_frame" type="array">
+            <obj_property name="ElementShortName">get_frame[2:0]</obj_property>
+            <obj_property name="ObjectShortName">get_frame[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/check_crc" type="array">
+            <obj_property name="ElementShortName">check_crc[2:0]</obj_property>
+            <obj_property name="ObjectShortName">check_crc[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/send_good_ack" type="array">
+            <obj_property name="ElementShortName">send_good_ack[2:0]</obj_property>
+            <obj_property name="ObjectShortName">send_good_ack[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_inst/send_bad_ack" type="array">
+            <obj_property name="ElementShortName">send_bad_ack[2:0]</obj_property>
+            <obj_property name="ObjectShortName">send_bad_ack[2:0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group277" type="group">
+         <obj_property name="label">demapper</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="group286" type="group">
+            <obj_property name="label">fpc_demap</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+         </wvobject>
+         <wvobject fp_name="group297" type="group">
+            <obj_property name="label">data wren</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/i_clk" type="logic">
+               <obj_property name="ElementShortName">i_clk</obj_property>
+               <obj_property name="ObjectShortName">i_clk</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/i_rst" type="logic">
+               <obj_property name="ElementShortName">i_rst</obj_property>
+               <obj_property name="ObjectShortName">i_rst</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/i_row_cnt" type="array">
+               <obj_property name="ElementShortName">i_row_cnt[1:0]</obj_property>
+               <obj_property name="ObjectShortName">i_row_cnt[1:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/i_col_cnt" type="array">
+               <obj_property name="ElementShortName">i_col_cnt[10:0]</obj_property>
+               <obj_property name="ObjectShortName">i_col_cnt[10:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/i_frame_data" type="array">
+               <obj_property name="ElementShortName">i_frame_data[7:0]</obj_property>
+               <obj_property name="ObjectShortName">i_frame_data[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/i_frame_data_valid" type="logic">
+               <obj_property name="ElementShortName">i_frame_data_valid</obj_property>
+               <obj_property name="ObjectShortName">i_frame_data_valid</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/o_pyld_data" type="array">
+               <obj_property name="ElementShortName">o_pyld_data[7:0]</obj_property>
+               <obj_property name="ObjectShortName">o_pyld_data[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/o_pyld_data_valid" type="logic">
+               <obj_property name="ElementShortName">o_pyld_data_valid</obj_property>
+               <obj_property name="ObjectShortName">o_pyld_data_valid</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/o_arq_en" type="logic">
+               <obj_property name="ElementShortName">o_arq_en</obj_property>
+               <obj_property name="ObjectShortName">o_arq_en</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/data_wren_inst/o_arq_en_valid" type="logic">
+               <obj_property name="ElementShortName">o_arq_en_valid</obj_property>
+               <obj_property name="ObjectShortName">o_arq_en_valid</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="group313" type="group">
+            <obj_property name="label">crc calc demap</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/i_clk" type="logic">
+               <obj_property name="ElementShortName">i_clk</obj_property>
+               <obj_property name="ObjectShortName">i_clk</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/i_rst" type="logic">
+               <obj_property name="ElementShortName">i_rst</obj_property>
+               <obj_property name="ObjectShortName">i_rst</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/i_row_cnt" type="array">
+               <obj_property name="ElementShortName">i_row_cnt[1:0]</obj_property>
+               <obj_property name="ObjectShortName">i_row_cnt[1:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/i_col_cnt" type="array">
+               <obj_property name="ElementShortName">i_col_cnt[10:0]</obj_property>
+               <obj_property name="ObjectShortName">i_col_cnt[10:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/i_frame_data" type="array">
+               <obj_property name="ElementShortName">i_frame_data[7:0]</obj_property>
+               <obj_property name="ObjectShortName">i_frame_data[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/i_frame_data_valid" type="logic">
+               <obj_property name="ElementShortName">i_frame_data_valid</obj_property>
+               <obj_property name="ObjectShortName">i_frame_data_valid</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/i_frame_data_fas" type="logic">
+               <obj_property name="ElementShortName">i_frame_data_fas</obj_property>
+               <obj_property name="ObjectShortName">i_frame_data_fas</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/o_frame_data" type="array">
+               <obj_property name="ElementShortName">o_frame_data[7:0]</obj_property>
+               <obj_property name="ObjectShortName">o_frame_data[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/o_frame_data_valid" type="logic">
+               <obj_property name="ElementShortName">o_frame_data_valid</obj_property>
+               <obj_property name="ObjectShortName">o_frame_data_valid</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/o_frame_data_fas" type="logic">
+               <obj_property name="ElementShortName">o_frame_data_fas</obj_property>
+               <obj_property name="ObjectShortName">o_frame_data_fas</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/o_crc_val" type="array">
+               <obj_property name="ElementShortName">o_crc_val[7:0]</obj_property>
+               <obj_property name="ObjectShortName">o_crc_val[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/o_crc_err" type="logic">
+               <obj_property name="ElementShortName">o_crc_err</obj_property>
+               <obj_property name="ObjectShortName">o_crc_err</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/o_crc_err_valid" type="logic">
+               <obj_property name="ElementShortName">o_crc_err_valid</obj_property>
+               <obj_property name="ObjectShortName">o_crc_err_valid</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/crc_val" type="array">
+               <obj_property name="ElementShortName">crc_val[7:0]</obj_property>
+               <obj_property name="ObjectShortName">crc_val[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_demap_inst/MAP_MODE" type="array">
+               <obj_property name="ElementShortName">MAP_MODE[31:0]</obj_property>
+               <obj_property name="ObjectShortName">MAP_MODE[31:0]</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/i_clk" type="logic">
+            <obj_property name="ElementShortName">i_clk</obj_property>
+            <obj_property name="ObjectShortName">i_clk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/i_rst" type="logic">
+            <obj_property name="ElementShortName">i_rst</obj_property>
+            <obj_property name="ObjectShortName">i_rst</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/o_pyld_data" type="array">
+            <obj_property name="ElementShortName">o_pyld_data[7:0]</obj_property>
+            <obj_property name="ObjectShortName">o_pyld_data[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/o_pyld_data_valid" type="logic">
+            <obj_property name="ElementShortName">o_pyld_data_valid</obj_property>
+            <obj_property name="ObjectShortName">o_pyld_data_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/i_frame_data" type="array">
+            <obj_property name="ElementShortName">i_frame_data[7:0]</obj_property>
+            <obj_property name="ObjectShortName">i_frame_data[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/i_frame_data_valid" type="logic">
+            <obj_property name="ElementShortName">i_frame_data_valid</obj_property>
+            <obj_property name="ObjectShortName">i_frame_data_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/i_frame_data_fas" type="logic">
+            <obj_property name="ElementShortName">i_frame_data_fas</obj_property>
+            <obj_property name="ObjectShortName">i_frame_data_fas</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/o_crc_err" type="logic">
+            <obj_property name="ElementShortName">o_crc_err</obj_property>
+            <obj_property name="ObjectShortName">o_crc_err</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/o_crc_err_valid" type="logic">
+            <obj_property name="ElementShortName">o_crc_err_valid</obj_property>
+            <obj_property name="ObjectShortName">o_crc_err_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/o_arq_en" type="logic">
+            <obj_property name="ElementShortName">o_arq_en</obj_property>
+            <obj_property name="ObjectShortName">o_arq_en</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/o_arq_en_valid" type="logic">
+            <obj_property name="ElementShortName">o_arq_en_valid</obj_property>
+            <obj_property name="ObjectShortName">o_arq_en_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/o_crc_val" type="array">
+            <obj_property name="ElementShortName">o_crc_val[7:0]</obj_property>
+            <obj_property name="ObjectShortName">o_crc_val[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/c_fpc_row_cnt" type="array">
+            <obj_property name="ElementShortName">c_fpc_row_cnt[1:0]</obj_property>
+            <obj_property name="ObjectShortName">c_fpc_row_cnt[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/c_fpc_col_cnt" type="array">
+            <obj_property name="ElementShortName">c_fpc_col_cnt[10:0]</obj_property>
+            <obj_property name="ObjectShortName">c_fpc_col_cnt[10:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/r_fpc_row_cnt" type="array">
+            <obj_property name="ElementShortName">r_fpc_row_cnt[1:0]</obj_property>
+            <obj_property name="ObjectShortName">r_fpc_row_cnt[1:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/r_fpc_col_cnt" type="array">
+            <obj_property name="ElementShortName">r_fpc_col_cnt[10:0]</obj_property>
+            <obj_property name="ObjectShortName">r_fpc_col_cnt[10:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_frame_data" type="array">
+            <obj_property name="ElementShortName">crc_calc_frame_data[7:0]</obj_property>
+            <obj_property name="ObjectShortName">crc_calc_frame_data[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_frame_data_valid" type="logic">
+            <obj_property name="ElementShortName">crc_calc_frame_data_valid</obj_property>
+            <obj_property name="ObjectShortName">crc_calc_frame_data_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/demapper_inst/crc_calc_frame_data_fas" type="logic">
+            <obj_property name="ElementShortName">crc_calc_frame_data_fas</obj_property>
+            <obj_property name="ObjectShortName">crc_calc_frame_data_fas</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group328" type="group">
+         <obj_property name="label">AXIS UART TX</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="group340" type="group">
+            <obj_property name="label">TX</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/CLK_100MHZ" type="logic">
+               <obj_property name="ElementShortName">CLK_100MHZ</obj_property>
+               <obj_property name="ObjectShortName">CLK_100MHZ</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/RESET" type="logic">
+               <obj_property name="ElementShortName">RESET</obj_property>
+               <obj_property name="ObjectShortName">RESET</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/clk_en_16_x_baud" type="logic">
+               <obj_property name="ElementShortName">clk_en_16_x_baud</obj_property>
+               <obj_property name="ObjectShortName">clk_en_16_x_baud</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/enable" type="logic">
+               <obj_property name="ElementShortName">enable</obj_property>
+               <obj_property name="ObjectShortName">enable</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/data_in" type="array">
+               <obj_property name="ElementShortName">data_in[7:0]</obj_property>
+               <obj_property name="ObjectShortName">data_in[7:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/send_data" type="logic">
+               <obj_property name="ElementShortName">send_data</obj_property>
+               <obj_property name="ObjectShortName">send_data</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/UART_TX" type="logic">
+               <obj_property name="ElementShortName">UART_TX</obj_property>
+               <obj_property name="ObjectShortName">UART_TX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/send_data_complete" type="logic">
+               <obj_property name="ElementShortName">send_data_complete</obj_property>
+               <obj_property name="ObjectShortName">send_data_complete</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/sstateTX" type="other">
+               <obj_property name="ElementShortName">sstateTX</obj_property>
+               <obj_property name="ObjectShortName">sstateTX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/scount4" type="array">
+               <obj_property name="ElementShortName">scount4[3:0]</obj_property>
+               <obj_property name="ObjectShortName">scount4[3:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/TX_inst/sdata_in" type="array">
+               <obj_property name="ElementShortName">sdata_in[7:0]</obj_property>
+               <obj_property name="ObjectShortName">sdata_in[7:0]</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/CLK_100MHZ" type="logic">
+            <obj_property name="ElementShortName">CLK_100MHZ</obj_property>
+            <obj_property name="ObjectShortName">CLK_100MHZ</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/RESET" type="logic">
+            <obj_property name="ElementShortName">RESET</obj_property>
+            <obj_property name="ObjectShortName">RESET</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/clk_en_16_x_baud" type="logic">
+            <obj_property name="ElementShortName">clk_en_16_x_baud</obj_property>
+            <obj_property name="ObjectShortName">clk_en_16_x_baud</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/enable" type="logic">
+            <obj_property name="ElementShortName">enable</obj_property>
+            <obj_property name="ObjectShortName">enable</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/data_in" type="array">
+            <obj_property name="ElementShortName">data_in[7:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/UART_TX" type="logic">
+            <obj_property name="ElementShortName">UART_TX</obj_property>
+            <obj_property name="ObjectShortName">UART_TX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/valid" type="logic">
+            <obj_property name="ElementShortName">valid</obj_property>
+            <obj_property name="ObjectShortName">valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/ready" type="logic">
+            <obj_property name="ElementShortName">ready</obj_property>
+            <obj_property name="ObjectShortName">ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/send_data" type="logic">
+            <obj_property name="ElementShortName">send_data</obj_property>
+            <obj_property name="ObjectShortName">send_data</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/tx_data_complete" type="logic">
+            <obj_property name="ElementShortName">tx_data_complete</obj_property>
+            <obj_property name="ObjectShortName">tx_data_complete</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/tx_data_complete_d1" type="logic">
+            <obj_property name="ElementShortName">tx_data_complete_d1</obj_property>
+            <obj_property name="ObjectShortName">tx_data_complete_d1</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/tx_data_complete_edge" type="logic">
+            <obj_property name="ElementShortName">tx_data_complete_edge</obj_property>
+            <obj_property name="ObjectShortName">tx_data_complete_edge</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/c_stateTX" type="other">
+            <obj_property name="ElementShortName">c_stateTX</obj_property>
+            <obj_property name="ObjectShortName">c_stateTX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/sender_tb/receiver_inst/axis_uart_tx_inst/r_stateTX" type="other">
+            <obj_property name="ElementShortName">r_stateTX</obj_property>
+            <obj_property name="ObjectShortName">r_stateTX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/i_clk" type="logic">
+         <obj_property name="ElementShortName">i_clk</obj_property>
+         <obj_property name="ObjectShortName">i_clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/i_rst" type="logic">
+         <obj_property name="ElementShortName">i_rst</obj_property>
+         <obj_property name="ObjectShortName">i_rst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/o_uart_tx" type="logic">
+         <obj_property name="ElementShortName">o_uart_tx</obj_property>
+         <obj_property name="ObjectShortName">o_uart_tx</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/o_crc_val" type="array">
+         <obj_property name="ElementShortName">o_crc_val[7:0]</obj_property>
+         <obj_property name="ObjectShortName">o_crc_val[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/i_otn_tx_data" type="logic">
+         <obj_property name="ElementShortName">i_otn_tx_data</obj_property>
+         <obj_property name="ObjectShortName">i_otn_tx_data</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/o_otn_rx_ack" type="logic">
+         <obj_property name="ElementShortName">o_otn_rx_ack</obj_property>
+         <obj_property name="ObjectShortName">o_otn_rx_ack</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/scount12" type="array">
+         <obj_property name="ElementShortName">scount12[11:0]</obj_property>
+         <obj_property name="ObjectShortName">scount12[11:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/sclk_en_16_x_baud" type="logic">
+         <obj_property name="ElementShortName">sclk_en_16_x_baud</obj_property>
+         <obj_property name="ObjectShortName">sclk_en_16_x_baud</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/tx_data" type="array">
+         <obj_property name="ElementShortName">tx_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">tx_data[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/tx_data_valid" type="logic">
+         <obj_property name="ElementShortName">tx_data_valid</obj_property>
+         <obj_property name="ObjectShortName">tx_data_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/tx_data_ready" type="logic">
+         <obj_property name="ElementShortName">tx_data_ready</obj_property>
+         <obj_property name="ObjectShortName">tx_data_ready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/demap_pyld_data" type="array">
+         <obj_property name="ElementShortName">demap_pyld_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">demap_pyld_data[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/demap_pyld_data_valid" type="logic">
+         <obj_property name="ElementShortName">demap_pyld_data_valid</obj_property>
+         <obj_property name="ObjectShortName">demap_pyld_data_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/demap_pyld_fifo_ready" type="logic">
+         <obj_property name="ElementShortName">demap_pyld_fifo_ready</obj_property>
+         <obj_property name="ObjectShortName">demap_pyld_fifo_ready</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_frame_data" type="array">
+         <obj_property name="ElementShortName">rec_tran_frame_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">rec_tran_frame_data[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/rec_tran_frame_data_valid" type="logic">
+         <obj_property name="ElementShortName">rec_tran_frame_data_valid</obj_property>
+         <obj_property name="ObjectShortName">rec_tran_frame_data_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/demap_crc_err" type="logic">
+         <obj_property name="ElementShortName">demap_crc_err</obj_property>
+         <obj_property name="ObjectShortName">demap_crc_err</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/demap_crc_err_valid" type="logic">
+         <obj_property name="ElementShortName">demap_crc_err_valid</obj_property>
+         <obj_property name="ObjectShortName">demap_crc_err_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/demap_arq_en" type="logic">
+         <obj_property name="ElementShortName">demap_arq_en</obj_property>
+         <obj_property name="ObjectShortName">demap_arq_en</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/demap_arq_en_valid" type="logic">
+         <obj_property name="ElementShortName">demap_arq_en_valid</obj_property>
+         <obj_property name="ObjectShortName">demap_arq_en_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/uart_tx_enable" type="logic">
+         <obj_property name="ElementShortName">uart_tx_enable</obj_property>
+         <obj_property name="ObjectShortName">uart_tx_enable</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/c_demap_crc_err" type="logic">
+         <obj_property name="ElementShortName">c_demap_crc_err</obj_property>
+         <obj_property name="ObjectShortName">c_demap_crc_err</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/r_demap_crc_err" type="logic">
+         <obj_property name="ElementShortName">r_demap_crc_err</obj_property>
+         <obj_property name="ObjectShortName">r_demap_crc_err</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/c_demap_arq_en" type="logic">
+         <obj_property name="ElementShortName">c_demap_arq_en</obj_property>
+         <obj_property name="ObjectShortName">c_demap_arq_en</obj_property>
+      </wvobject>
+      <wvobject fp_name="/sender_tb/receiver_inst/r_demap_arq_en" type="logic">
+         <obj_property name="ElementShortName">r_demap_arq_en</obj_property>
+         <obj_property name="ObjectShortName">r_demap_arq_en</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

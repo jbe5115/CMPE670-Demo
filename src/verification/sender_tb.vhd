@@ -44,6 +44,17 @@ begin
         o_otn_rx_data   => o_otn_rx_data,
         i_otn_tx_ack    => i_otn_tx_ack
     );
+    
+    -- TEMPORARY CHANGE --
+    receiver_inst : entity receiver
+    port map (
+        i_clk         => clk,
+        i_rst         => sys_rst,
+        o_uart_tx     => open,
+        o_crc_val     => open,
+        i_otn_tx_data => o_otn_rx_data,
+        o_otn_rx_ack  => i_otn_tx_ack
+    );
 
     -- Clock process definitions
     process

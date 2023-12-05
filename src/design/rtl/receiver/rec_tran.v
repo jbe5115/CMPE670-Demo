@@ -6,6 +6,7 @@ module rec_tran (
     // clock and control
     input        i_clk,
     input        i_rst,
+    input        i_sclk_en_16_x_baud,
     input        i_crc_err,
     input        i_crc_err_valid,
     // data to the demapper
@@ -19,6 +20,11 @@ module rec_tran (
     input        i_otn_tx_data,
     output reg   o_otn_rx_ack
 );
+
+    // clock control
+    reg [3:0] scount4;
+    // Baud rate enable indicator
+    wire       baud_en;
 
     // Frame start pattern
     localparam [0:47] FRAME_START = 48'hF6F6F6282828;
@@ -49,7 +55,7 @@ module rec_tran (
     
     // fifo frame data valid
     wire m_fifo_frame_data_valid;
-    wire s_fifo_frame_data_valid; // TODO: use this
+    wire s_fifo_frame_data_valid;
     
     // arq_en register
     reg c_arq_en, r_arq_en;
@@ -59,12 +65,17 @@ module rec_tran (
     
     // output assignments
     assign o_frame_data_valid = m_fifo_frame_data_valid && !(r_state == capture_pattern);
+    // baud_en assignment
+    assign baud_en  = i_sclk_en_16_x_baud && (scount4 == 4'hF);
+    
+    // slave inteface fifo data valid
+    assign s_fifo_frame_data_valid = (r_bit_count == 3'd0) && ((r_state == capture_pattern) || (r_state == get_frame)) && baud_en;
     
     // reverse otn_tx_data_arr bits
     generate
         genvar i;
         for (i = 0; i < 10; i = i + 1) begin
-            assign otn_tx_data_arr_r[0] = otn_tx_data_arr[9 - i];
+            assign otn_tx_data_arr_r[i] = otn_tx_data_arr[9 - i];
         end
     endgenerate
     
@@ -81,13 +92,14 @@ module rec_tran (
                     end
                 end
                 capture_pattern : begin
-                    if (r_bit_count == 3'd7) begin
+                    if ((r_bit_count == 3'd0) && baud_en) begin
                         case (r_cap_count)
+                            3'b000 : if (otn_tx_data_arr_r[9:2] == FRAME_START[0:7])  begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
                             3'b001 : if (otn_tx_data_arr_r[9:2] == FRAME_START[8:15])  begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
                             3'b010 : if (otn_tx_data_arr_r[9:2] == FRAME_START[16:23]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
                             3'b011 : if (otn_tx_data_arr_r[9:2] == FRAME_START[24:31]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
                             3'b100 : if (otn_tx_data_arr_r[9:2] == FRAME_START[32:39]) begin c_state = capture_pattern; end else begin c_state = reset_fifo; end
-                            default : if (otn_tx_data_arr_r[9:2] == FRAME_START[40:47]) begin c_state = get_frame;       end else begin c_state = reset_fifo; end
+                            default : if (otn_tx_data_arr_r[9:2] == FRAME_START[40:47]) begin c_state = get_frame;      end else begin c_state = reset_fifo; end
                         endcase
                     end
                 end
@@ -120,24 +132,30 @@ module rec_tran (
     
     // capture count combinational process
     always @(*) begin : CapCombProc
+        c_cap_count = r_cap_count;
         if (i_rst) begin
-            c_cap_count = 3'b001;
+            c_cap_count = 3'b000;
         end else begin
-            if ((r_state == capture_pattern) && (r_bit_count == 3'd7)) begin
-                c_cap_count = r_cap_count + 1;
+            if (r_state == capture_pattern) begin
+                if (baud_en && (r_bit_count == 3'd7)) begin
+                    c_cap_count = r_cap_count + 1;
+                end
             end else begin
-                c_cap_count = 3'b001;
+                c_cap_count = 3'b000;
             end
         end
     end
     
     // frame byte count combinational process
     always @(*) begin : ByteCombProc
+        c_byte_count = r_byte_count;
         if (i_rst) begin
             c_byte_count = 0;
         end else begin
             if ((r_state == get_frame) && (r_bit_count == 3'd7)) begin
-                c_byte_count = r_byte_count + 1;
+                if (baud_en) begin
+                    c_byte_count = r_byte_count + 1;
+                end
             end else begin
                 c_byte_count = 3'b001;
             end
@@ -146,9 +164,10 @@ module rec_tran (
     
     // bit count process
     always @(*) begin : BitCombProc
+        c_bit_count = r_bit_count;
         if (i_rst) begin
             c_bit_count = 0;
-        end else begin
+        end else if (baud_en) begin
             if ((r_state == capture_pattern) || (r_state == get_frame)) begin
                 c_bit_count = r_bit_count + 1;
             end else begin
@@ -198,14 +217,27 @@ module rec_tran (
     axis_data_fifo_rx axis_fifo_inst (
         .s_axis_aresetn  (~(i_rst || (r_state == reset_fifo))),  
         .s_axis_aclk     (i_clk),        
-        .s_axis_tvalid   ((r_bit_count == 3'd7)),    
+        .s_axis_tvalid   (s_fifo_frame_data_valid),
         .s_axis_tready   (/*(don't worry, it WILL be ready)*/),    
         .s_axis_tdata    (otn_tx_data_arr_r[9:2]),     
         .m_axis_tvalid   (m_fifo_frame_data_valid),    
-        .m_axis_tready   (i_tx_fifo_ready),    
+        .m_axis_tready   (i_tx_fifo_ready && !(r_state == capture_pattern)), // don't send out anything until frame pattern is fully captured. 
         .m_axis_tdata    (o_frame_data), 
         .almost_empty    (/* open */)
-    );    
+    );
+    
+    // scount4 counter process
+    always @(posedge i_clk) begin
+        if (i_rst) begin
+            scount4 <= 0;
+        end else if (i_sclk_en_16_x_baud) begin
+            if ((r_state == idle) || (r_state == capture_pattern) || (r_state == get_frame)) begin
+                scount4 <= scount4 + 1;
+            end else begin
+                scount4 <= 0;
+            end
+        end
+    end  
     
     // register update process
     always @(posedge i_clk) begin : RegProc
@@ -216,10 +248,15 @@ module rec_tran (
         r_byte_count <= c_byte_count;
         r_ack_count  <= c_ack_count;
         r_arq_en     <= c_arq_en;
-        for (I = 0; I < 10; I = I + 1) begin 
-            if (I == 0) begin otn_tx_data_arr[0] <= i_otn_tx_data;        end 
-            else        begin otn_tx_data_arr[I] <= otn_tx_data_arr[I-1]; end
-        end        
+        // incoming data array logic
+        if (i_rst) begin
+            otn_tx_data_arr <= 10'd0;
+        end else if (baud_en) begin
+            for (I = 0; I < 10; I = I + 1) begin 
+                if (I == 0) begin otn_tx_data_arr[0] <= i_otn_tx_data;        end 
+                else        begin otn_tx_data_arr[I] <= otn_tx_data_arr[I-1]; end
+            end
+        end    
     end
     
 endmodule

@@ -26,7 +26,7 @@ module receiver (
     wire [7:0]   demap_pyld_data;
     wire         demap_pyld_data_valid;
     wire         demap_pyld_fifo_ready; // go to rec_tran
-    reg          c_uart_tx_enable, r_uart_tx_enable;
+    wire         uart_tx_enable;
     
     // REC_TRAN -> DEMAPPER
     wire [7:0]   rec_tran_frame_data;
@@ -35,28 +35,31 @@ module receiver (
     // CRC ERROR
     wire         demap_crc_err;
     wire         demap_crc_err_valid;
+    reg          c_demap_crc_err, r_demap_crc_err;
     
     // ARQ EN
     wire         demap_arq_en;
     wire         demap_arq_en_valid;
+    reg          c_demap_arq_en, r_demap_arq_en;
     
     // Serial receiver & ACK Transmitter
     rec_tran rec_tran_inst (
         // clock and control
-        .i_clk              (i_clk),
-        .i_rst              (i_rst),
-        .i_crc_err          (demap_crc_err),
-        .i_crc_err_valid    (demap_crc_err_valid),
+        .i_clk               (i_clk),
+        .i_rst               (i_rst),
+        .i_sclk_en_16_x_baud (sclk_en_16_x_baud),
+        .i_crc_err           (demap_crc_err),
+        .i_crc_err_valid     (demap_crc_err_valid),
         // data to the demapper
-        .o_frame_data       (rec_tran_frame_data),
-        .o_frame_data_valid (rec_tran_frame_data_valid),
-        .i_arq_en           (demap_arq_en),
-        .i_arq_en_valid     (demap_arq_en_valid),
+        .o_frame_data        (rec_tran_frame_data),
+        .o_frame_data_valid  (rec_tran_frame_data_valid),
+        .i_arq_en            (demap_arq_en),
+        .i_arq_en_valid      (demap_arq_en_valid),
         // input control signals
-        .i_tx_fifo_ready    (demap_pyld_fifo_ready),
+        .i_tx_fifo_ready     (demap_pyld_fifo_ready),
         // data in/out of the FPGA
-        .i_otn_tx_data      (i_otn_tx_data),
-        .o_otn_rx_ack       (o_otn_rx_ack)
+        .i_otn_tx_data       (i_otn_tx_data),
+        .o_otn_rx_ack        (o_otn_rx_ack)
     );
     
     // DEMAPPER
@@ -100,25 +103,30 @@ module receiver (
         .CLK_100MHZ         (i_clk),
         .RESET              (i_rst),
         .clk_en_16_x_baud   (sclk_en_16_x_baud),
-        .enable             (r_uart_tx_enable),
+        .enable             (uart_tx_enable),
         .data_in            (tx_data),
         .UART_TX            (o_uart_tx),
         .valid              (tx_data_valid),
         .ready              (tx_data_ready)
     );
     
-    // c_uart_tx_enable assignment process
+    // demap control output assignment process
     always @(*) begin
         if (i_rst) begin
-            c_uart_tx_enable = 1'b0;
+            c_demap_crc_err = 1'b1;
+            c_demap_arq_en  = 1'b1;
         end else begin
-            c_uart_tx_enable = (demap_crc_err_valid) ? ~demap_crc_err : r_uart_tx_enable;
+            c_demap_crc_err = (demap_crc_err_valid) ? demap_crc_err : r_demap_crc_err;
+            c_demap_arq_en  = (demap_arq_en_valid)  ? demap_arq_en  : r_demap_arq_en;
         end
     end
     
+    assign uart_tx_enable = ~r_demap_arq_en || ~r_demap_crc_err;
+    
     // register update process
     always @(posedge i_clk) begin
-        r_uart_tx_enable <= c_uart_tx_enable;
+        r_demap_crc_err <= c_demap_crc_err;
+        r_demap_arq_en  <= c_demap_arq_en;
     end
     
     always @(posedge i_clk) begin

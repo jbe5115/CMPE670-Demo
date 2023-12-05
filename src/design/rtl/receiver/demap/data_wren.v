@@ -45,6 +45,9 @@ module data_wren (
             end else if(i_frame_data_valid) begin
                 o_pyld_data         <= i_frame_data;
                 o_pyld_data_valid   <= i_frame_data_valid;
+            end else begin
+                o_pyld_data       <= i_frame_data;
+                o_pyld_data_valid <= i_frame_data_valid;
             end
         end
     end

@@ -86,7 +86,7 @@ end process;
 process(CLK_100MHZ)
 begin
   if CLK_100MHZ'event and CLK_100MHZ = '1' then
-    if clk_en_16_x_baud = '1' and enable = '1' then
+    if clk_en_16_x_baud = '1' then
       case sstateTX is
            when wstart => UART_TX <= '0';
            when wd0    => UART_TX <= sdata_in(0);
@@ -118,7 +118,9 @@ end process;
 process(CLK_100MHZ)
 begin
   if CLK_100MHZ'event and CLK_100MHZ = '1' then
-    if clk_en_16_x_baud = '1' and enable = '1' then
+    if RESET = '1' then
+        sdata_in <= (others => '0');
+    elsif clk_en_16_x_baud = '1' and enable = '1' then
       case sstateTX is
 		   when wstart => 
 		         if scount4 = X"8" then -- Maybe change this??
