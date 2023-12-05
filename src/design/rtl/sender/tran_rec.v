@@ -24,7 +24,7 @@ module tran_rec (
 );
 
     // clock control
-    reg [3:0]   scount4;
+    reg [4:0]  scount5;
     // Baud rate enable indicator
     wire       baud_en;
 
@@ -75,7 +75,7 @@ module tran_rec (
     assign o_otn_rx_data    = r_otn_rx_data;
     
     assign m_fifo_ready = ((r_state == send_frame) || (r_state == send_mem_frame)) && (r_bit_count == 3'd7) && baud_en;
-    assign baud_en  = i_sclk_en_16_x_baud && (scount4 == 4'hF);
+    assign baud_en  = i_sclk_en_16_x_baud && (scount5 == 5'd19);
 
     // RX FIFO (Takes in mapped OTN data, sends it out of FPGA thru state machine)
     axis_data_fifo_rx axis_fifo_inst (
@@ -221,15 +221,15 @@ module tran_rec (
         end
     end
     
-    // scount4 counter process
+    // scount5 counter process
     always @(posedge i_clk) begin
         if (i_rst) begin
-            scount4 <= 0;
+            scount5 <= 0;
         end else if (i_sclk_en_16_x_baud) begin
             if ((r_state == send_frame) || (r_state == send_mem_frame)) begin
-                scount4 <= scount4 + 1;
+                scount5 <= (scount5 == 19) ? 0 : scount5 + 1;
             end else begin
-                scount4 <= 0;
+                scount5 <= 0;
             end
         end
     end

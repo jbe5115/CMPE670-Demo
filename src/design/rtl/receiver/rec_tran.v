@@ -22,7 +22,7 @@ module rec_tran (
 );
 
     // clock control
-    reg [3:0] scount4;
+    reg [4:0]  scount5;
     // Baud rate enable indicator
     wire       baud_en;
 
@@ -66,7 +66,7 @@ module rec_tran (
     // output assignments
     assign o_frame_data_valid = m_fifo_frame_data_valid && !(r_state == capture_pattern);
     // baud_en assignment
-    assign baud_en  = i_sclk_en_16_x_baud && (scount4 == 4'hF);
+    assign baud_en  = i_sclk_en_16_x_baud && (scount5 == 5'd19);
     
     // slave inteface fifo data valid
     assign s_fifo_frame_data_valid = (r_bit_count == 3'd0) && ((r_state == capture_pattern) || (r_state == get_frame)) && baud_en;
@@ -107,7 +107,7 @@ module rec_tran (
                     c_state = idle;
                 end
                 get_frame : begin
-                    if (r_byte_count == 4158) begin
+                    if ((r_byte_count == 4158) && baud_en) begin
                         c_state = (r_arq_en) ? check_crc : idle;
                     end
                 end
@@ -152,8 +152,8 @@ module rec_tran (
         if (i_rst) begin
             c_byte_count = 0;
         end else begin
-            if ((r_state == get_frame) && (r_bit_count == 3'd7)) begin
-                if (baud_en) begin
+            if (r_state == get_frame) begin
+                if (baud_en && (r_bit_count == 3'd7)) begin
                     c_byte_count = r_byte_count + 1;
                 end
             end else begin
@@ -226,18 +226,18 @@ module rec_tran (
         .almost_empty    (/* open */)
     );
     
-    // scount4 counter process
+    // scount5 counter process
     always @(posedge i_clk) begin
         if (i_rst) begin
-            scount4 <= 0;
+            scount5 <= 0;
         end else if (i_sclk_en_16_x_baud) begin
             if ((r_state == idle) || (r_state == capture_pattern) || (r_state == get_frame)) begin
-                scount4 <= scount4 + 1;
+                scount5 <= (scount5 == 19) ? 0 : scount5 + 1;
             end else begin
-                scount4 <= 0;
+                scount5 <= 0;
             end
         end
-    end  
+    end
     
     // register update process
     always @(posedge i_clk) begin : RegProc
