@@ -6,11 +6,10 @@ use IEEE.std_logic_TextIO.all;
 use STD.TextIO.all;
 
 
+entity send_rec_tb is
+end send_rec_tb;
 
-entity sender_tb is
-end sender_tb;
-
-architecture tb of sender_tb is
+architecture tb of send_rec_tb is
 
     signal  clk            :  std_logic:='0';
     signal  sys_rst        :  std_logic:='1';
@@ -28,10 +27,10 @@ architecture tb of sender_tb is
     constant  clk_per_sym  :  integer  :=  868;
     constant  symbol_len   :  time     :=  clk_period*clk_per_sym;  --   100  MHz  /  115200  =  868.1  clock/symbol
 
-    -- debug
-    signal dbg_L_END    : boolean := true;
-    signal dbg_data_out : std_ulogic_vector(7 downto 0);
-    signal dbg_data_in  : std_logic_vector(7 downto 0);
+    constant  max_row_cnt   : integer := 64;
+    constant  max_col_cnt   : integer := 64;
+    shared variable row_cnt : integer := 0;
+    shared variable col_cnt : integer := 0;
 
 begin
 
@@ -47,38 +46,43 @@ begin
         o_crc_val_rec => rec_crc_val
     );
 
---    sender_inst : entity sender
---    port map(
---        -- PC/FPPGA INTERFACE
---        i_clk           => clk,
---        i_rst           => sys_rst,
---        i_uart_rx       => i_UART_RX,
---        i_arq_en        => arq_en,
---        i_corrupt_en    => corrupt_en,
---        -- TRANSMIT INTERFACE
---        o_otn_rx_data   => o_otn_rx_data,
---        i_otn_tx_ack    => i_otn_tx_ack
---    );
-    
---    -- TEMPORARY CHANGE --
---    receiver_inst : entity receiver
---    port map (
---        i_clk         => clk,
---        i_rst         => sys_rst,
---        o_uart_tx     => uart_tx,
---        o_crc_val     => rec_crc_val,
---        i_otn_tx_data => o_otn_rx_data,
---        o_otn_rx_ack  => i_otn_tx_ack
---    );
 
     -- Clock process definitions
-    process
-    begin
+    process is begin
         clk <= '0';
         wait for clk_period/2;
         clk <= '1';
         wait for clk_period/2;
     end process;
+    
+    -- receive data process
+    process is
+        constant payload_out_file : string := "payloadOUT.txt";
+        
+        procedure get_char(
+            chr : out integer
+        ) is
+            variable vect : std_logic_vector(7 downto 0);
+        begin
+            if o_otn_rx_data /= '0' then        -- in case UART is started
+                wait until o_otn_rx_data = '0'; -- start
+            end if;
+            wait for symbol_len/2; -- center
+            wait for symbol_len; -- start bit
+            for i in 0 to vect'high loop
+                vect(i) := o_otn_rx_data;
+                wait for symbol_len;
+            end loop;
+            chr := to_integer(unsigned(vect));
+            wait for symbol_len/2;
+        end get_char;
+    
+    begin
+        -- TODO: receive byte, write to file, increment row & col counters
+        write(lineout, outimage(row, col));
+        write(lineout, ' ');
+        write(lineout, ' ');
+    end process
 
     -- Stimulus process
     process
@@ -118,24 +122,6 @@ begin
             i_UART_RX <= '1';
             wait for symbol_len;
         end send_char;
-
-        procedure rx_char(
-            chr : out integer
-        ) is
-            variable vect : std_logic_vector(7 downto 0);
-        begin
-            if o_otn_rx_data /= '0' then        -- in case UART is started
-                wait until o_otn_rx_data = '0'; -- start
-            end if;
-            wait for symbol_len/2; -- center
-            wait for symbol_len; -- start bit
-            for i in 0 to vect'high loop
-                vect(i) := o_otn_rx_data;
-                wait for symbol_len;
-            end loop;
-            chr := to_integer(unsigned(vect));
-            wait for symbol_len/2;
-        end rx_char;
         
         -- file IO
         constant payload_file   :  string := "payload.txt";
