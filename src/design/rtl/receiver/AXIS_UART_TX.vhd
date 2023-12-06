@@ -62,7 +62,11 @@ begin
     process (r_stateTX) is begin
             if (r_stateTX = idle) then
                 send_data <= '0';
-                ready <= '1';
+                if (enable = '1') then
+                    ready <= '1';
+                else
+                    ready <= '0';
+                end if;
             elsif (r_stateTX = process_data) then
                 send_data <= '1';
                 ready <= '0';
