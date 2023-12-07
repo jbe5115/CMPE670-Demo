@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="78600000000001fs"></ZoomEndTime>
-      <Cursor1Time time="5409235000000fs"></Cursor1Time>
+      <ZoomEndTime time="405539000000001fs"></ZoomEndTime>
+      <Cursor1Time time="366520187773000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="187"></NameColumnWidth>
-      <ValueColumnWidth column_width="58"></ValueColumnWidth>
+      <NameColumnWidth column_width="219"></NameColumnWidth>
+      <ValueColumnWidth column_width="112"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="20" />
+   <WVObjectSize size="19" />
    <wvobject fp_name="group14" type="group">
       <obj_property name="label">stimulus</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -148,10 +148,6 @@
       <obj_property name="ElementShortName">send_crc_val[7:0]</obj_property>
       <obj_property name="ObjectShortName">send_crc_val[7:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/send_rec_tb/rec_tx_en" type="logic">
-      <obj_property name="ElementShortName">rec_tx_en</obj_property>
-      <obj_property name="ObjectShortName">rec_tx_en</obj_property>
-   </wvobject>
    <wvobject fp_name="/send_rec_tb/clk_period" type="other">
       <obj_property name="ElementShortName">clk_period</obj_property>
       <obj_property name="ObjectShortName">clk_period</obj_property>
@@ -178,7 +174,6 @@
       <wvobject fp_name="group253" type="group">
          <obj_property name="label">mapper</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/mapper_inst/i_rst" type="logic">
             <obj_property name="ElementShortName">i_rst</obj_property>
             <obj_property name="ObjectShortName">i_rst</obj_property>
@@ -632,6 +627,7 @@
       <wvobject fp_name="group150" type="group">
          <obj_property name="label">rec tran</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/i_clk" type="logic">
             <obj_property name="ElementShortName">i_clk</obj_property>
             <obj_property name="ObjectShortName">i_clk</obj_property>
@@ -684,10 +680,6 @@
             <obj_property name="ElementShortName">scount5[4:0]</obj_property>
             <obj_property name="ObjectShortName">scount5[4:0]</obj_property>
          </wvobject>
-         <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/baud_en" type="logic">
-            <obj_property name="ElementShortName">baud_en</obj_property>
-            <obj_property name="ObjectShortName">baud_en</obj_property>
-         </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/c_state" type="array">
             <obj_property name="ElementShortName">c_state[2:0]</obj_property>
             <obj_property name="ObjectShortName">c_state[2:0]</obj_property>
@@ -712,6 +704,10 @@
             <obj_property name="ElementShortName">r_cap_count[2:0]</obj_property>
             <obj_property name="ObjectShortName">r_cap_count[2:0]</obj_property>
          </wvobject>
+         <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/baud_en" type="logic">
+            <obj_property name="ElementShortName">baud_en</obj_property>
+            <obj_property name="ObjectShortName">baud_en</obj_property>
+         </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/c_bit_count" type="array">
             <obj_property name="ElementShortName">c_bit_count[2:0]</obj_property>
             <obj_property name="ObjectShortName">c_bit_count[2:0]</obj_property>
@@ -723,10 +719,12 @@
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/c_byte_count" type="array">
             <obj_property name="ElementShortName">c_byte_count[12:0]</obj_property>
             <obj_property name="ObjectShortName">c_byte_count[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/r_byte_count" type="array">
             <obj_property name="ElementShortName">r_byte_count[12:0]</obj_property>
             <obj_property name="ObjectShortName">r_byte_count[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/m_fifo_frame_data_valid" type="logic">
             <obj_property name="ElementShortName">m_fifo_frame_data_valid</obj_property>
@@ -832,6 +830,7 @@
          <wvobject fp_name="group800" type="group">
             <obj_property name="label">data wren</obj_property>
             <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/data_wren_inst/i_clk" type="logic">
                <obj_property name="ElementShortName">i_clk</obj_property>
                <obj_property name="ObjectShortName">i_clk</obj_property>
@@ -843,10 +842,12 @@
             <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/data_wren_inst/i_row_cnt" type="array">
                <obj_property name="ElementShortName">i_row_cnt[1:0]</obj_property>
                <obj_property name="ObjectShortName">i_row_cnt[1:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             </wvobject>
             <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/data_wren_inst/i_col_cnt" type="array">
                <obj_property name="ElementShortName">i_col_cnt[10:0]</obj_property>
                <obj_property name="ObjectShortName">i_col_cnt[10:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             </wvobject>
             <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/data_wren_inst/i_frame_data" type="array">
                <obj_property name="ElementShortName">i_frame_data[7:0]</obj_property>
@@ -924,18 +925,22 @@
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/c_fpc_row_cnt" type="array">
             <obj_property name="ElementShortName">c_fpc_row_cnt[1:0]</obj_property>
             <obj_property name="ObjectShortName">c_fpc_row_cnt[1:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/c_fpc_col_cnt" type="array">
             <obj_property name="ElementShortName">c_fpc_col_cnt[10:0]</obj_property>
             <obj_property name="ObjectShortName">c_fpc_col_cnt[10:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/r_fpc_row_cnt" type="array">
             <obj_property name="ElementShortName">r_fpc_row_cnt[1:0]</obj_property>
             <obj_property name="ObjectShortName">r_fpc_row_cnt[1:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/r_fpc_col_cnt" type="array">
             <obj_property name="ElementShortName">r_fpc_col_cnt[10:0]</obj_property>
             <obj_property name="ObjectShortName">r_fpc_col_cnt[10:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/demapper_inst/crc_calc_frame_data" type="array">
             <obj_property name="ElementShortName">crc_calc_frame_data[7:0]</obj_property>
@@ -953,7 +958,6 @@
       <wvobject fp_name="group466" type="group">
          <obj_property name="label">axis uart tx</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group557" type="group">
             <obj_property name="label">uart tx</obj_property>
             <obj_property name="DisplayName">label</obj_property>
@@ -1086,10 +1090,6 @@
       <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/o_crc_val" type="array">
          <obj_property name="ElementShortName">o_crc_val[7:0]</obj_property>
          <obj_property name="ObjectShortName">o_crc_val[7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/i_tx_en" type="logic">
-         <obj_property name="ElementShortName">i_tx_en</obj_property>
-         <obj_property name="ObjectShortName">i_tx_en</obj_property>
       </wvobject>
       <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/i_otn_tx_data" type="logic">
          <obj_property name="ElementShortName">i_otn_tx_data</obj_property>

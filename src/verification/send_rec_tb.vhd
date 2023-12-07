@@ -84,11 +84,14 @@ begin
         end get_char;
         
         
-        file payload_out_file : TEXT open WRITE_MODE is "payloadOUT.txt";
-        variable current_char : integer;
-        variable lineout      : line;
-        variable dimline      : line;
+        constant payload_out_file1 : string := "payloadOUT1.txt";
+        constant payload_out_file2 : string := "payloadOUT2.txt";
+        file stim                  : TEXT;
+        variable current_char      : integer;
+        variable lineout           : line;
+        variable dimline           : line;
     begin
+        file_open(stim, payload_out_file1, write_mode);
         -- Finally, get all of the image data
         for row in 1 to 64 loop
             for col in 1 to 64 loop
@@ -96,8 +99,21 @@ begin
                 hwrite(lineout, std_ulogic_vector(to_unsigned(current_char, 8)));   
                 write(lineout, ' ');      
             end loop;
-            writeline(payload_out_file, lineout);
+            writeline(stim, lineout);
         end loop;  
+        file_close(stim);
+        
+        file_open(stim, payload_out_file2, write_mode);
+        -- Finally, get all of the image data
+        for row in 1 to 64 loop
+            for col in 1 to 64 loop
+                get_char(current_char);
+                hwrite(lineout, std_ulogic_vector(to_unsigned(current_char, 8)));   
+                write(lineout, ' ');      
+            end loop;
+            writeline(stim, lineout);
+        end loop;  
+        file_close(stim);
     end process;
 
     -- Stimulus process
@@ -117,8 +133,8 @@ begin
         end send_char;
         
         -- file IO
-        constant payload_file   :  string := "payload.txt";
-        file     stim           : text open READ_MODE is payload_file;
+        constant payload_file   : string := "payload.txt";
+        file     stim           : text;
         variable L_IN           : line;
         variable EOL_N          : boolean := TRUE;    
         variable byte_out       : std_ulogic_vector(7 downto 0);
@@ -127,6 +143,8 @@ begin
         arq_en          <= '0';
         corrupt_en      <= '0';
         i_otn_tx_ack    <= '1';
+        
+        file_open(stim, payload_file, read_mode);
         
         wait for 200 ns;
         sys_rst <= '0';
@@ -142,7 +160,22 @@ begin
             EOL_N := true;
         end loop;
         
-        wait for 50 ms;       
+        wait for 50 ms;
+        -- "refresh" file
+        file_close(stim);
+        file_open(stim, payload_file, read_mode);
+        wait for 5 us;
+        
+        while not endfile(stim) loop
+            readline(stim, L_IN);          -- get line
+            hread(L_IN, byte_out, EOL_N); -- get first byte
+            while (EOL_N = true) loop
+                send_char(unsigned(byte_out));
+                hread(L_IN, byte_out, EOL_N);
+                wait for 0 ns;
+            end loop;
+            EOL_N := true;
+        end loop;      
         
         assert false
             report "End of simulation"

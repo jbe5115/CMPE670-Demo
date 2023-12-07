@@ -107,7 +107,7 @@ module rec_tran (
                     c_state = idle;
                 end
                 get_frame : begin
-                    if ((r_byte_count == 4158) && baud_en) begin
+                    if ((r_byte_count == 4159) && (r_bit_count == 0) && baud_en) begin
                         c_state = (r_arq_en) ? check_crc : idle;
                     end
                 end
