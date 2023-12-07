@@ -39,7 +39,7 @@ end JEUART_TX;
 
 architecture Behavioral of JEUART_TX is
 
-type   tstateTX is (idle, wstart, wstop, wd0, wd1, wd2, wd3, wd4, wd5, wd6, wd7, write_strobe);
+type   tstateTX is (idle, wstart, wstop, wstop2, wd0, wd1, wd2, wd3, wd4, wd5, wd6, wd7, write_strobe);
 signal sstateTX : tstateTX:=idle;
 signal scount4 : std_logic_vector (3 downto 0) := (others => '0');
 
@@ -65,7 +65,8 @@ begin
 		  when wd5       => if scount4 = X"F" then sstateTX <= wd6; end if;
 		  when wd6       => if scount4 = X"F" then sstateTX <= wd7; end if;
 		  when wd7       => if scount4 = X"F" then sstateTX <= wstop; end if;
-		  when wstop     => sstateTX    <= write_strobe;
+		  when wstop     => if scount4 = X"F" then sstateTX <= wstop2; end if;
+		  when wstop2    => if scount4 = X"F" then sstateTX <= write_strobe; end if;
 		  when write_strobe => sstateTX <= idle;
 		end case;
 	 end if;
@@ -97,7 +98,7 @@ begin
            when wd5    => UART_TX <= sdata_in(5);
            when wd6    => UART_TX <= sdata_in(6);
            when wd7    => UART_TX <= sdata_in(7);
-		   when others => UART_TX <= '1'; -- idle and wstop
+		   when others => UART_TX <= '1'; -- idle and wstop, wstop2
 	    end case;
 	 end if;
   end if;
@@ -108,7 +109,7 @@ begin
   if CLK_100MHZ'event and CLK_100MHZ = '1' then
     if clk_en_16_x_baud = '1' and enable = '1' then
        case sstateTX is
-		   when wstart|wd0|wd1|wd2|wd3|wd4|wd5|wd6|wd7|wstop => scount4 <= scount4 + '1';
+		   when wstart|wd0|wd1|wd2|wd3|wd4|wd5|wd6|wd7|wstop|wstop2 => scount4 <= scount4 + '1';
 		   when others => scount4 <= (others => '0');
 		 end case;
 	 end if;
