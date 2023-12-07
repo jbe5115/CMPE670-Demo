@@ -62,6 +62,8 @@ module crc_calc # (
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas; 
                         crc_val             <= crc(crc_val, i_frame_data);      // Calculate CRC Value for this iteration
+                        o_crc_err           <= 1'b0;
+                        o_crc_err_valid     <= 1'b0;
                     end else if(i_col_cnt < 16 && i_frame_data_valid) begin
                         // Pass overhead through
                         o_frame_data        <= i_frame_data;
@@ -71,16 +73,21 @@ module crc_calc # (
                         crc_val             <= 8'hFF;
                         o_crc_val           <= 8'hFF;
                         o_crc_err           <= 1'b0;
+                        o_crc_err_valid     <= 1'b0;
                     end else begin
                         o_frame_data        <= i_frame_data;
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas;
-                        o_crc_val           <= crc_val;                     
+                        o_crc_val           <= crc_val;
+                        o_crc_err           <= 1'b0;    
+                        o_crc_err_valid     <= 1'b0;                
                     end
                 end
                 // when map mode is 1: calculate the CRC on every valid clock cycle that contains payload data (column count is between 16 and 1039 on any row)
                 //                     output the crc (on o_frame_data) when row is 3 and column is 1040
-                1'b1 : begin                    
+                1'b1 : begin
+                    o_crc_err       <= 1'b0;
+                    o_crc_err_valid <= 1'b0;           
                     if (i_row_cnt == 3 && i_col_cnt == 1040 && i_frame_data_valid) begin
                         // Send CRC on output
                         o_frame_data        <= crc_val;
@@ -101,7 +108,6 @@ module crc_calc # (
                         // Reset hardware interface
                         crc_val             <= 8'hFF;
                         o_crc_val           <= 8'hFF;
-                        o_crc_err           <= 1'b0;
                     end else begin
                         o_frame_data        <= i_frame_data;
                         o_frame_data_valid  <= i_frame_data_valid;
@@ -114,6 +120,10 @@ module crc_calc # (
                     o_crc_val       <= 8'hFF;
                     o_crc_err       <= 1'b0;
                     o_crc_err_valid <= 1'b0;
+                    o_frame_data        <= 8'b0;
+                    o_frame_data_valid  <= 1'b0;
+                    o_frame_data_fas    <= 1'b0;
+                    crc_val             <= 8'b0;
                 end
             endcase
         end

@@ -15,7 +15,6 @@ architecture tb of send_rec_tb is
     signal  sys_rst        :  std_logic:='1';
     signal  i_UART_RX      :  std_logic:='1';
     signal  uart_tx        :  std_logic;
-    signal  i_otn_tx_ack   :  std_logic;
     signal  corrupt_en     :  std_logic;
     signal  arq_en         :  std_logic;
     signal  rec_crc_val    :  std_logic_vector(7 downto 0);
@@ -140,9 +139,8 @@ begin
         variable byte_out       : std_ulogic_vector(7 downto 0);
     begin
         sys_rst         <= '1';
-        arq_en          <= '1';
-        corrupt_en      <= '1';
-        i_otn_tx_ack    <= '1';
+        arq_en          <= '0';
+        corrupt_en      <= '0';
         
         file_open(stim, payload_file, read_mode);
         
@@ -160,26 +158,28 @@ begin
             EOL_N := true;
         end loop;
         
-        wait for 200 ms;
+        wait for 50 ms;
         -- "refresh" file
         file_close(stim);
         file_open(stim, payload_file, read_mode);
         wait for 5 us;
         
---        while not endfile(stim) loop
---            readline(stim, L_IN);          -- get line
---            hread(L_IN, byte_out, EOL_N); -- get first byte
---            while (EOL_N = true) loop
---                send_char(unsigned(byte_out));
---                hread(L_IN, byte_out, EOL_N);
---                wait for 0 ns;
---            end loop;
---            EOL_N := true;
---        end loop;      
+        while not endfile(stim) loop
+            readline(stim, L_IN);          -- get line
+            hread(L_IN, byte_out, EOL_N); -- get first byte
+            while (EOL_N = true) loop
+                send_char(unsigned(byte_out));
+                hread(L_IN, byte_out, EOL_N);
+                wait for 0 ns;
+            end loop;
+            EOL_N := true;
+        end loop;    
         
---        assert false
---            report "End of simulation"
---            severity failure;
+        wait for 50 ms;  
+        
+        assert false
+            report "End of simulation"
+            severity failure;
         wait;
 
     end process;
