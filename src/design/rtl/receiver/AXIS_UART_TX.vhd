@@ -40,17 +40,25 @@ architecture oh_behave of AXIS_UART_TX is
     type   AXIstateTX is (idle, process_data);
     signal c_stateTX, r_stateTX : AXIstateTX;
     
+    signal c_dataTX, r_dataTX : std_logic_vector(7 downto 0);
+    
 begin
-
     -- combinational state update process
-    process (r_stateTX, tx_data_complete_edge, valid, RESET, enable) is begin
-        c_stateTX <= r_stateTX;
+    -- also captures incoming data_in
+    process (r_stateTX, r_dataTX, data_in, tx_data_complete_edge, valid, RESET) is begin
+        c_dataTX <= r_dataTX;
         if RESET = '1' then
             c_stateTX <= idle;
-        elsif enable = '1' then
+        else
             case (r_stateTX) is
-                when idle         => if (valid = '1') then c_stateTX <= process_data; end if;
-                when process_data => if (tx_data_complete_edge = '1') then c_stateTX <= idle; end if;
+                when idle         => 
+                    if (valid = '1') then 
+                        c_stateTX <= process_data; 
+                        c_dataTX  <= data_in;
+                    else 
+                        c_stateTX <= r_stateTX; 
+                    end if;
+                when process_data => if (tx_data_complete_edge = '1') then c_stateTX <= idle; else c_stateTX <= r_stateTX; end if;
                 when others       => c_stateTX <= idle;
             end case;
         end if;
@@ -59,7 +67,7 @@ begin
     -- edge detector
     tx_data_complete_edge <= (not tx_data_complete_d1) and tx_data_complete;
     
-    process (r_stateTX) is begin
+    process (r_stateTX, enable) is begin
             if (r_stateTX = idle) then
                 send_data <= '0';
                 if (enable = '1') then
@@ -79,7 +87,8 @@ begin
     -- reg update process
     process (CLK_100MHZ) is begin
         if rising_edge(CLK_100MHZ) then
-            r_stateTX   <= c_stateTX;
+            r_stateTX <= c_stateTX;
+            r_dataTX  <= c_dataTX;
             tx_data_complete_d1 <= tx_data_complete;
         end if;
     end process;
@@ -91,7 +100,7 @@ begin
       enable             => enable,
       send_data_complete => tx_data_complete,
       send_data          => send_data,
-      data_in            => data_in,
+      data_in            => r_dataTX,
       UART_TX            => UART_TX);
 
 end oh_behave;

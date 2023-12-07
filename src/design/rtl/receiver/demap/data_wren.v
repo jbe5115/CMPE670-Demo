@@ -40,7 +40,7 @@ module data_wren (
             // if the current column is 1040 on any row, output all zeros
             end else if (i_col_cnt == 1040 && i_frame_data_valid) begin
                 o_pyld_data         <= 8'b0;
-                o_pyld_data_valid   <= i_frame_data_valid;
+                o_pyld_data_valid   <= 1'b0;
             // on all other cases, if the incoming data is valid output it directly.
             end else if(i_frame_data_valid) begin
                 o_pyld_data         <= i_frame_data;
