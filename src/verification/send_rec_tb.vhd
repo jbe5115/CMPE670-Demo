@@ -139,7 +139,7 @@ begin
         variable byte_out       : std_ulogic_vector(7 downto 0);
     begin
         sys_rst         <= '1';
-        arq_en          <= '0';
+        arq_en          <= '1';
         corrupt_en      <= '0';
         
         file_open(stim, payload_file, read_mode);

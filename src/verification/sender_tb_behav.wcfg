@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="405539000000001fs"></ZoomEndTime>
-      <Cursor1Time time="366520187773000fs"></Cursor1Time>
+      <ZoomStartTime time="366608187119212fs"></ZoomStartTime>
+      <ZoomEndTime time="366608289755393fs"></ZoomEndTime>
+      <Cursor1Time time="366608250737000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="219"></NameColumnWidth>
-      <ValueColumnWidth column_width="112"></ValueColumnWidth>
+      <ValueColumnWidth column_width="107"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="19" />
+   <WVObjectSize size="18" />
    <wvobject fp_name="group14" type="group">
       <obj_property name="label">stimulus</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -127,10 +127,6 @@
    <wvobject fp_name="/send_rec_tb/uart_tx" type="logic">
       <obj_property name="ElementShortName">uart_tx</obj_property>
       <obj_property name="ObjectShortName">uart_tx</obj_property>
-   </wvobject>
-   <wvobject fp_name="/send_rec_tb/i_otn_tx_ack" type="logic">
-      <obj_property name="ElementShortName">i_otn_tx_ack</obj_property>
-      <obj_property name="ObjectShortName">i_otn_tx_ack</obj_property>
    </wvobject>
    <wvobject fp_name="/send_rec_tb/corrupt_en" type="logic">
       <obj_property name="ElementShortName">corrupt_en</obj_property>
@@ -627,7 +623,6 @@
       <wvobject fp_name="group150" type="group">
          <obj_property name="label">rec tran</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/rec_tran_inst/i_clk" type="logic">
             <obj_property name="ElementShortName">i_clk</obj_property>
             <obj_property name="ObjectShortName">i_clk</obj_property>
@@ -958,6 +953,7 @@
       <wvobject fp_name="group466" type="group">
          <obj_property name="label">axis uart tx</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group557" type="group">
             <obj_property name="label">uart tx</obj_property>
             <obj_property name="DisplayName">label</obj_property>
@@ -1038,6 +1034,10 @@
             <obj_property name="ElementShortName">UART_TX</obj_property>
             <obj_property name="ObjectShortName">UART_TX</obj_property>
          </wvobject>
+         <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/axis_uart_tx_inst/c_stateTX" type="other">
+            <obj_property name="ElementShortName">c_stateTX</obj_property>
+            <obj_property name="ObjectShortName">c_stateTX</obj_property>
+         </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/axis_uart_tx_inst/r_stateTX" type="other">
             <obj_property name="ElementShortName">r_stateTX</obj_property>
             <obj_property name="ObjectShortName">r_stateTX</obj_property>
@@ -1065,10 +1065,6 @@
          <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/axis_uart_tx_inst/tx_data_complete_edge" type="logic">
             <obj_property name="ElementShortName">tx_data_complete_edge</obj_property>
             <obj_property name="ObjectShortName">tx_data_complete_edge</obj_property>
-         </wvobject>
-         <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/axis_uart_tx_inst/c_stateTX" type="other">
-            <obj_property name="ElementShortName">c_stateTX</obj_property>
-            <obj_property name="ObjectShortName">c_stateTX</obj_property>
          </wvobject>
       </wvobject>
       <wvobject fp_name="/send_rec_tb/top_inst/receiver_inst/i_clk" type="logic">

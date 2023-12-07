@@ -37,7 +37,7 @@ architecture oh_behave of AXIS_UART_TX is
     signal tx_data_complete_d1   : std_logic;
     signal tx_data_complete_edge : std_logic;
     
-    type   AXIstateTX is (idle, process_data);
+    type   AXIstateTX is (disable, idle, process_data);
     signal c_stateTX, r_stateTX : AXIstateTX;
     
     signal c_dataTX, r_dataTX : std_logic_vector(7 downto 0);
@@ -45,21 +45,41 @@ architecture oh_behave of AXIS_UART_TX is
 begin
     -- combinational state update process
     -- also captures incoming data_in
-    process (r_stateTX, r_dataTX, data_in, tx_data_complete_edge, valid, RESET) is begin
+    process (r_stateTX, r_dataTX, data_in, tx_data_complete_edge, valid, RESET, enable) is begin
         c_dataTX <= r_dataTX;
+        c_stateTX <= r_stateTX;
         if RESET = '1' then
             c_stateTX <= idle;
+            c_dataTX  <= (others => '0');
         else
             case (r_stateTX) is
-                when idle         => 
-                    if (valid = '1') then 
+                when disable =>
+                    if (enable = '1') then
+                        c_stateTX <= idle;
+                    end if;
+                when idle =>
+                    if (enable = '0') then
+                        c_stateTX <= disable;
+                    elsif (valid = '1') then 
                         c_stateTX <= process_data; 
                         c_dataTX  <= data_in;
                     else 
                         c_stateTX <= r_stateTX; 
                     end if;
-                when process_data => if (tx_data_complete_edge = '1') then c_stateTX <= idle; else c_stateTX <= r_stateTX; end if;
-                when others       => c_stateTX <= idle;
+                when process_data =>
+                    if (enable = '0') then
+                        c_stateTX <= disable;
+                    elsif (tx_data_complete_edge = '1') then 
+                        c_stateTX <= idle; 
+                    else 
+                        c_stateTX <= r_stateTX;
+                    end if;
+                when others =>
+                    if (enable = '0') then
+                        c_stateTX <= disable;
+                    else
+                        c_stateTX <= idle;
+                    end if;
             end case;
         end if;
     end process;
@@ -68,13 +88,12 @@ begin
     tx_data_complete_edge <= (not tx_data_complete_d1) and tx_data_complete;
     
     process (r_stateTX, enable) is begin
-            if (r_stateTX = idle) then
+            if (r_stateTX = disable) then
                 send_data <= '0';
-                if (enable = '1') then
-                    ready <= '1';
-                else
-                    ready <= '0';
-                end if;
+                ready <= '0';
+            elsif (r_stateTX = idle) then
+                send_data <= '0';
+                ready <= '1';
             elsif (r_stateTX = process_data) then
                 send_data <= '1';
                 ready <= '0';
