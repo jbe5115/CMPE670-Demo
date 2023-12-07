@@ -11,7 +11,6 @@ module top (
     input          i_uart_rx,
     input          i_arq_en,
     input          i_corrupt_en,
-    input          i_tx_en, // receiver TX enable
     // outputs
     output          o_uart_tx,
     output [7:0]    o_crc_val_sen,
@@ -37,7 +36,6 @@ receiver receiver_inst (
     .i_rst          (i_rst),
     .o_uart_tx      (o_uart_tx),
     .o_crc_val      (o_crc_val_rec),
-    .i_tx_en        (i_tx_en),
     .i_otn_tx_data  (otn_rx_data),
     .o_otn_rx_ack   (otn_tx_ack)
 );

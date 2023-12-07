@@ -8,7 +8,6 @@ module receiver (
     input         i_rst,
     output        o_uart_tx,
     output [7:0]  o_crc_val,
-    input         i_tx_en,
     // TRANSMIT INTERFACE
     input         i_otn_tx_data,
     output        o_otn_rx_ack
@@ -104,7 +103,7 @@ module receiver (
         .CLK_100MHZ         (i_clk),
         .RESET              (i_rst),
         .clk_en_16_x_baud   (sclk_en_16_x_baud),
-        .enable             (uart_tx_enable && i_tx_en),
+        .enable             (uart_tx_enable),
         .data_in            (tx_data),
         .UART_TX            (o_uart_tx),
         .valid              (tx_data_valid),
