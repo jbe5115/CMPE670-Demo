@@ -58,6 +58,10 @@ always @(posedge i_clk) begin : CorruptProc
             o_frame_data        <= i_pyld_data;
             o_frame_data_valid  <= i_pyld_data_valid;
             o_frame_data_fas    <= i_frame_data_fas;
+        end else begin
+            o_frame_data         <= i_pyld_data;
+            o_frame_data_valid   <= i_pyld_data_valid;
+            o_frame_data_fas     <= 1'b0;
         end
     end else begin
         // Pass data through if switch is not on.
