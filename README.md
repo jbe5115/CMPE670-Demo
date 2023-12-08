@@ -23,15 +23,21 @@ Some modules that will be in the mapper (in general datapath order)
 * **UART RX Module with AXI Stream Wrapper**
 * **Xilinx AXI Stream FIFO** for RX direction
 In most cases, a gearbox would be used at this point (to increase the data bus width from 8 bits to 512, 1024, etc. But if we keep our bus at 8 bits we willnot need one.  This will require more cycles to map a frame but will make the logic significantly easier.
-* **Frame Position Counter (FPC)** this module will take in the incoming data from the FIFO (along with valid) and map it into the ODU frame.  It will take in the current frame position (row and column) and based on this, either map the incoming data and output it or output overhead.  It will also output the additional 1 byte column at the end of each row, but will **NOT** calculate the CRC
+* **Frame Position Counter (FPC)**
+  * This module will take in the incoming data from the FIFO (along with valid) and map it into the ODU frame.
+  *   It will take in the current frame position (row and column) and based on this, either map the incoming data and output it or output overhead.
+  *     It will also output the additional 1 byte column at the end of each row, but will **NOT** calculate the CRC
 * **CRC Calculator**
   * After mapped data leaves the frame controller, it must be sent directly to the CRC calculator
   * Like the frame controller, the CRC calculator will also take in the current frame row and column counts, but with an extra clock cycle delay
   * The CRC is **ONLY** calculated on the payload of the frame, not overhead
   * Use the input row and col data to know when to calculate
   * For calculation, we will be using an LFSR (linear feedback shift register)
-* **Data Request** based on the current row and frame data from the FPC, the data request module will basically control our "AXI Stream Ready" that communicates with the FIFO.  It will know when to request more data based on if the FIFO is empty or not, if the current frame position is overhead, etc.
-* **ARQ Interface** more details below
+* **Data Request**
+  * Based on the current row and frame data from the FPC, the data request module will basically control our "AXI Stream Ready" that communicates with the FIFO.
+  *   It will know when to request more data based on if the FIFO is empty or not, if the current frame position is overhead, etc.
+* **ARQ Interface** see section on ARQ Interface for more details
+
 The overall structure of the mapper takes on sort of a "piplined" approach where our data "flows" through it.  The demapper will be EXTREMELY similar and probably more simple.
 
 **Insert high level diagram here**
