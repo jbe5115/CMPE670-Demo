@@ -23,7 +23,7 @@ Some modules that will be in the mapper (in general datapath order)
 * **UART RX Module with AXI Stream Wrapper**
 * **Xilinx AXI Stream FIFO** for RX direction
 
-In most cases, a gearbox would be used at this point (to increase the data bus width from 8 bits to 512, 1024, etc. But if we keep our bus at 8 bits we willnot need one.  This will require more cycles to map a frame but will make the logic significantly easier.
+In most cases, a gearbox would be used at this point (to increase the data bus width from 8 bits to 512, 1024, etc. But if we keep our bus at 8 bits we will not need one.  This will require more cycles to map a frame but will make the logic significantly easier.
 * **Frame Position Counter (FPC)**
   * This module will take in the incoming data from the FIFO (along with valid) and map it into the ODU frame.
   * It will take in the current frame position (row and column) and based on this, either map the incoming data and output it or output overhead.
@@ -37,8 +37,31 @@ In most cases, a gearbox would be used at this point (to increase the data bus w
 * **Data Request**
   * Based on the current row and frame data from the FPC, the data request module will basically control our "AXI Stream Ready" that communicates with the FIFO.
   *   It will know when to request more data based on if the FIFO is empty or not, if the current frame position is overhead, etc.
-* **ARQ Interface** see section on ARQ Interface for more details
+* **ARQ Interface** see section on ARQ Handshake Specifications for more details
 
 The overall structure of the mapper takes on sort of a "piplined" approach where our data "flows" through it.  The demapper will be EXTREMELY similar and probably more simple.
 
 **Insert high level diagram here**
+
+## Demapper Specifications
+* **ARQ Serial Interface**
+* **Frame Position Counter (FPC)**
+  * Same as in mapper, except it is used for demapping now
+* **CRC Calculator and Checker**
+  * Same module as in the mapper but extra logic will be needed to **check the CRC** after it has been fully calculated at the end of a frame
+  * Compare the calculated CRC with the one located inside of the demapped frame and assert a signal indicating a mismatch
+  * Will need the FPC data
+* **Demap Frame Controller/Data Write Enable**
+  * After passing through the CRC Calculator/Checker, this module will undo exactly what is done in the mapper's frame controller
+  * It will extract the payload from the incoming frame data and output it
+  * Will need the (delayed) FPC data
+* **Xilinx AXI Stream FIFO** for the TX direction
+* **UART TX Module with AXI Stream Wrapper**
+
+## ARQ Handshake Specifications
+
+## Hardware Specifications
+
+## Verification Specifications
+
+## Cases to be Tested
