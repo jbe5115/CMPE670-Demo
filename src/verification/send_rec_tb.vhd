@@ -175,7 +175,7 @@ begin
             EOL_N := true;
         end loop;    
         
-        wait for 50 ms;  
+        wait for 400 ms;  
         
         assert false
             report "End of simulation"
