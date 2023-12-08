@@ -22,11 +22,12 @@ Verilog tutorial: https://www.asic-world.com/verilog/veritut.html
 Some modules that will be in the mapper (in general datapath order)
 * **UART RX Module with AXI Stream Wrapper**
 * **Xilinx AXI Stream FIFO** for RX direction
+
 In most cases, a gearbox would be used at this point (to increase the data bus width from 8 bits to 512, 1024, etc. But if we keep our bus at 8 bits we willnot need one.  This will require more cycles to map a frame but will make the logic significantly easier.
 * **Frame Position Counter (FPC)**
   * This module will take in the incoming data from the FIFO (along with valid) and map it into the ODU frame.
-  *   It will take in the current frame position (row and column) and based on this, either map the incoming data and output it or output overhead.
-  *     It will also output the additional 1 byte column at the end of each row, but will **NOT** calculate the CRC
+  * It will take in the current frame position (row and column) and based on this, either map the incoming data and output it or output overhead.
+  * It will also output the additional 1 byte column at the end of each row, but will **NOT** calculate the CRC
 * **CRC Calculator**
   * After mapped data leaves the frame controller, it must be sent directly to the CRC calculator
   * Like the frame controller, the CRC calculator will also take in the current frame row and column counts, but with an extra clock cycle delay
