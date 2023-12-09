@@ -192,11 +192,14 @@ module rec_tran (
     
     // c_ack_count process
     always @(*) begin
+        c_ack_count = r_ack_count;
         if (i_rst) begin
             c_ack_count = 2'b00;
         end else begin
             if ((r_state == send_bad_ack) || (r_state == send_good_ack)) begin
-                c_ack_count = r_ack_count + 1;
+                if (baud_en) begin
+                    c_ack_count = r_ack_count + 1;
+                end
             end else begin
                 c_ack_count = 2'b00;
             end
@@ -231,7 +234,7 @@ module rec_tran (
         if (i_rst) begin
             scount5 <= 0;
         end else if (i_sclk_en_16_x_baud) begin
-            if ((r_state == idle) || (r_state == capture_pattern) || (r_state == get_frame)) begin
+            if ((r_state == idle) || (r_state == capture_pattern) || (r_state == get_frame) || (r_state == send_good_ack) || (r_state == send_bad_ack)) begin
                 scount5 <= (scount5 == 19) ? 0 : scount5 + 1;
             end else begin
                 scount5 <= 0;

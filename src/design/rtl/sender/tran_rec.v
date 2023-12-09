@@ -112,12 +112,14 @@ module tran_rec (
                     end
                 end
                 ack_wait : begin
-                    if (!otn_tx_ack_sync_arr[2]) begin // ACK start bit detected
+                    if (!otn_tx_ack_sync_arr[2] && baud_en) begin // ACK start bit detected
                         c_state = read_ack;
                     end
                 end
                 read_ack : begin
-                    c_state = check_ack;
+                    if (baud_en) begin
+                        c_state = check_ack;
+                    end
                 end
                 check_ack : begin
                     // is the ACK good or bad???
@@ -165,7 +167,7 @@ module tran_rec (
         if (i_rst) begin
             c_otn_tx_ack = 1'b0;
         end else begin
-            if (r_state == read_ack) begin
+            if ((r_state == read_ack) && baud_en) begin
                 c_otn_tx_ack = otn_tx_ack_sync_arr[2];
             end else begin
                 c_otn_tx_ack = r_otn_tx_ack;
@@ -226,7 +228,7 @@ module tran_rec (
         if (i_rst) begin
             scount5 <= 0;
         end else if (i_sclk_en_16_x_baud) begin
-            if ((r_state == send_frame) || (r_state == send_mem_frame)) begin
+            if ((r_state == send_frame) || (r_state == send_mem_frame) || (r_state == ack_wait) || (r_state == read_ack)) begin
                 scount5 <= (scount5 == 19) ? 0 : scount5 + 1;
             end else begin
                 scount5 <= 0;
@@ -243,9 +245,13 @@ module tran_rec (
         r_bit_count    <= c_bit_count;
         r_current_byte <= c_current_byte;
         r_otn_rx_data  <= c_otn_rx_data;
-        for (I = 0; I < 3; I = I + 1) begin 
-            if (I == 0) begin otn_tx_ack_sync_arr[0] <= i_otn_tx_ack;             end 
-            else        begin otn_tx_ack_sync_arr[I] <= otn_tx_ack_sync_arr[I-1]; end
+        if (i_rst) begin
+            otn_tx_ack_sync_arr <= 3'd0;
+        end else if (baud_en) begin
+            for (I = 0; I < 3; I = I + 1) begin 
+                if (I == 0) begin otn_tx_ack_sync_arr[0] <= i_otn_tx_ack;             end 
+                else        begin otn_tx_ack_sync_arr[I] <= otn_tx_ack_sync_arr[I-1]; end
+            end
         end
     end
 
