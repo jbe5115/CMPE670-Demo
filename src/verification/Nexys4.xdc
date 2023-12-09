@@ -7,8 +7,7 @@ create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_
 set_property PACKAGE_PIN M18 [get_ports i_rst]
 set_property IOSTANDARD LVCMOS33 [get_ports i_rst]
 
-set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS33} [get_ports i_corrupt_en]
-set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS33} [get_ports i_arq_en]
+set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS33} [get_ports i_arq_en]
 
 # ==== LEDs ====
 set_property PACKAGE_PIN H17 [get_ports {o_crc_val[0]}]

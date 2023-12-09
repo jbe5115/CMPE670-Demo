@@ -7,8 +7,19 @@ create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_
 set_property PACKAGE_PIN M18 [get_ports i_rst]
 set_property IOSTANDARD LVCMOS33 [get_ports i_rst]
 
+## ==== Switches ====
+
 set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS33} [get_ports i_corrupt_en]
 set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS33} [get_ports i_arq_en]
+
+set_property -dict {PACKAGE_PIN V10 IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[7]}]
+set_property -dict {PACKAGE_PIN U11 IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[6]}]
+set_property -dict {PACKAGE_PIN U12 IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[5]}]
+set_property -dict {PACKAGE_PIN H6  IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[4]}]
+set_property -dict {PACKAGE_PIN T13 IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[3]}]
+set_property -dict {PACKAGE_PIN R16 IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[2]}]
+set_property -dict {PACKAGE_PIN U8  IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[1]}]
+set_property -dict {PACKAGE_PIN T8  IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[0]}]
 
 # ==== LEDs ====
 

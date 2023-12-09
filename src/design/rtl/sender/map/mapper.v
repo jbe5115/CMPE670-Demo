@@ -18,7 +18,6 @@ module mapper (
     input        i_tran_rec_fifo_ready,
     input        i_line_retrans_req,
     // hardware interface
-    input        i_corrupt_en,
     input        i_arq_en,
     output [7:0] o_crc_val
 );
@@ -30,8 +29,8 @@ module mapper (
     // FPC signals
     wire [1:0]  c_fpc_row_cnt;
     wire [10:0] c_fpc_col_cnt;
-    reg  [1:0]  r_fpc_row_cnt, r_fpc_row_cnt_d1;
-    reg  [10:0] r_fpc_col_cnt, r_fpc_col_cnt_d1;
+    reg  [1:0]  r_fpc_row_cnt;
+    reg  [10:0] r_fpc_col_cnt;
   
     // frame controller output
     wire [7:0] frm_cntrl_frame_data;
@@ -40,11 +39,6 @@ module mapper (
     
     // data req signals
     wire       data_req;
-    
-    // Signals connecting CRC to corruptor
-    wire [7:0]  pyld_data;
-    wire        pyld_data_valid;
-    wire        frame_data_fas;
     
     wire        c_map_enable;
     reg         r_map_enable;
@@ -64,8 +58,6 @@ module mapper (
         // fpc row & col cnt registers
         r_fpc_row_cnt    <= c_fpc_row_cnt;
         r_fpc_col_cnt    <= c_fpc_col_cnt;
-        r_fpc_row_cnt_d1 <= r_fpc_row_cnt;
-        r_fpc_col_cnt_d1 <= r_fpc_col_cnt;
         r_map_enable     <= c_map_enable;
     end
     
@@ -131,33 +123,14 @@ module mapper (
         .i_frame_data_valid (frm_cntrl_frame_data_valid),
         .i_frame_data_fas   (frm_cntrl_frame_data_fas),
         // line interface out
-        .o_frame_data       (pyld_data),
-        .o_frame_data_valid (pyld_data_valid),
-        .o_frame_data_fas   (frame_data_fas),
+        .o_frame_data       (o_frame_data),
+        .o_frame_data_valid (o_frame_data_valid),
+        .o_frame_data_fas   (o_frame_data_fas),
         // hardware interface
         .o_crc_val          (o_crc_val),
         // DEMAP only
         .o_crc_err          (/*open*/),
         .o_crc_err_valid    (/*open*/)
-    );
-
-    // Corruptor Component
-    corruptor corruptor_inst (
-        // clock and control
-        .i_clk              (i_clk),
-        .i_rst              (i_rst),
-        .i_row_cnt          (r_fpc_row_cnt_d1),
-        .i_col_cnt          (r_fpc_col_cnt_d1),
-        // line interface in
-        .i_pyld_data        (pyld_data),
-        .i_pyld_data_valid  (pyld_data_valid),
-        .i_frame_data_fas   (frame_data_fas),
-        // line interface out
-        .o_frame_data       (o_frame_data),
-        .o_frame_data_valid (o_frame_data_valid),
-        .o_frame_data_fas   (o_frame_data_fas),
-        // hardware interface
-        .i_corrupt_en       (i_corrupt_en)
     );
     
 

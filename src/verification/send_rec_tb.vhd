@@ -21,7 +21,7 @@ architecture tb of send_rec_tb is
     signal  send_crc_val   :  std_logic_vector(7 downto 0);
 
     -- Clock period definitions
-    constant  clk_period   :  time     :=  10 ns; -- Does not represent current rate (100 MHz)
+    constant  clk_period   :  time     :=  2 ns; -- Does not represent current rate (100 MHz)
     constant  clk_per_sym  :  integer  :=  868; -- was 868 with 10 ns clock
     constant  symbol_len   :  time     :=  clk_period*clk_per_sym;  --   100  MHz  /  115200  =  868.1  clock/symbol
 

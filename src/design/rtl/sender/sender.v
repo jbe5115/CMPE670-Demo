@@ -8,7 +8,6 @@ module sender (
     input          i_rst,
     input          i_uart_rx,
     input          i_arq_en,
-    input          i_corrupt_en,
     output [7:0]   o_crc_val,
     // TRANSMIT INTERFACE
     output         o_otn_rx_data,
@@ -91,7 +90,6 @@ module sender (
         .i_tran_rec_fifo_ready (tr_fifo_ready),
         .i_line_retrans_req    (tr_retrans_req),
         // hardware interface
-        .i_corrupt_en          (i_corrupt_en),
         .i_arq_en              (i_arq_en),
         .o_crc_val             (o_crc_val)
     );

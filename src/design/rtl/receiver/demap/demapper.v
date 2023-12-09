@@ -18,6 +18,8 @@ module demapper (
     output       o_arq_en,
     output       o_arq_en_valid,
     // hardware interface
+    input        i_corrupt_en,
+    input  [7:0] i_corrupt_seed,
     output [7:0] o_crc_val
 );
 
@@ -26,16 +28,25 @@ module demapper (
     wire [10:0] c_fpc_col_cnt;
     reg  [1:0]  r_fpc_row_cnt;
     reg  [10:0] r_fpc_col_cnt;
+    reg  [1:0]  r_fpc_row_cnt_d1;
+    reg  [10:0] r_fpc_col_cnt_d1;
     
     // crc calculator output
     wire [7:0] crc_calc_frame_data;
     wire       crc_calc_frame_data_valid;
     wire       crc_calc_frame_data_fas;
     
+    // corruptor output
+    wire [7:0] corrupt_frame_data;
+    wire       corrupt_frame_data_valid;
+    wire       corrupt_frame_data_fas;    
+    
     always @(posedge i_clk) begin
         // fpc row & col cnt registers
-        r_fpc_row_cnt <= c_fpc_row_cnt;
-        r_fpc_col_cnt <= c_fpc_col_cnt;
+        r_fpc_row_cnt    <= c_fpc_row_cnt;
+        r_fpc_col_cnt    <= c_fpc_col_cnt;
+        r_fpc_row_cnt_d1 <= r_fpc_row_cnt;
+        r_fpc_col_cnt_d1 <= r_fpc_col_cnt;
     end
     
     // Frame position counter
@@ -56,8 +67,8 @@ module demapper (
         // clock and control
         .i_clk              (i_clk),
         .i_rst              (i_rst),
-        .i_row_cnt          (r_fpc_row_cnt),
-        .i_col_cnt          (r_fpc_col_cnt),
+        .i_row_cnt          (r_fpc_row_cnt_d1),
+        .i_col_cnt          (r_fpc_col_cnt_d1),
         // line interface
         .i_frame_data       (crc_calc_frame_data),
         .i_frame_data_valid (crc_calc_frame_data_valid),
@@ -77,12 +88,12 @@ module demapper (
         // clock and control
         .i_clk              (i_clk),
         .i_rst              (i_rst),
-        .i_row_cnt          (c_fpc_row_cnt),
-        .i_col_cnt          (c_fpc_col_cnt),
+        .i_row_cnt          (r_fpc_row_cnt),
+        .i_col_cnt          (r_fpc_col_cnt),
         // line interface in
-        .i_frame_data       (i_frame_data),
-        .i_frame_data_valid (i_frame_data_valid),
-        .i_frame_data_fas   (i_frame_data_fas),
+        .i_frame_data       (i_frame_data),       // change back to corrupt_frame_data
+        .i_frame_data_valid (i_frame_data_valid), // change back to corrupt_frame_data_valid
+        .i_frame_data_fas   (i_frame_data_fas),   // change back to corrupt_frame_data_fas
         // line interface out
         .o_frame_data       (crc_calc_frame_data),
         .o_frame_data_valid (crc_calc_frame_data_valid),
@@ -92,6 +103,26 @@ module demapper (
         // DEMAP only
         .o_crc_err          (o_crc_err),
         .o_crc_err_valid    (o_crc_err_valid)
+    );
+    
+    // Corruptor Component
+    corruptor corruptor_inst (
+        // clock and control
+        .i_clk              (i_clk),
+        .i_rst              (i_rst),
+        .i_row_cnt          (c_fpc_row_cnt),
+        .i_col_cnt          (c_fpc_col_cnt),
+        // line interface in
+        .i_frame_data       (i_frame_data),
+        .i_frame_data_valid (i_frame_data_valid),
+        .i_frame_data_fas   (i_frame_data_fas),
+        // line interface out
+        .o_frame_data       (corrupt_frame_data),
+        .o_frame_data_valid (corrupt_frame_data_valid),
+        .o_frame_data_fas   (corrupt_frame_data_fas),
+        // hardware interface
+        .i_corrupt_en       (i_corrupt_en),
+        .i_corrupt_seed     (i_corrupt_seed)
     );
 
 endmodule

@@ -6,6 +6,8 @@ module receiver (
     // PC/FPGA INTERFACE
     input         i_clk,
     input         i_rst,
+    input         i_corrupt_en,
+    input  [7:0]  i_corrupt_seed,
     output        o_uart_tx,
     output [7:0]  o_crc_val,
     // TRANSMIT INTERFACE
@@ -36,6 +38,7 @@ module receiver (
     wire         demap_crc_err;
     wire         demap_crc_err_valid;
     reg          c_demap_crc_err, r_demap_crc_err;
+    reg          demap_crc_err_d1;
     
     // ARQ EN
     wire         demap_arq_en;
@@ -79,6 +82,8 @@ module receiver (
         .o_arq_en              (demap_arq_en),
         .o_arq_en_valid        (demap_arq_en_valid),
         // hardware interface
+        .i_corrupt_en          (i_corrupt_en),
+        .i_corrupt_seed        (i_corrupt_seed),
         .o_crc_val             (o_crc_val)
     );
     
@@ -86,7 +91,7 @@ module receiver (
     // UART TX FIFO (Takes in demapped payload data, sends it to UART TX)
     // this FIFO must reset when a CRC error is detected.
     axis_data_fifo_rx axis_fifo_inst (
-        .s_axis_aresetn  (~(i_rst || demap_crc_err)),
+        .s_axis_aresetn  (~(i_rst /*|| (demap_crc_err_d1 && r_demap_arq_en)*/)), // TODO: THIS NEEDS TO BE FIXED IN ORDER FOR ARQ TO WORK!!!
         .s_axis_aclk     (i_clk),
         .s_axis_tvalid   (demap_pyld_data_valid),
         .s_axis_tready   (demap_pyld_fifo_ready),
@@ -127,6 +132,7 @@ module receiver (
     always @(posedge i_clk) begin
         r_demap_crc_err <= c_demap_crc_err;
         r_demap_arq_en  <= c_demap_arq_en;
+        demap_crc_err_d1 <= demap_crc_err;
     end
     
     always @(posedge i_clk) begin
