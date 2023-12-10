@@ -273,13 +273,13 @@ module tran_rec (
     wire signal_match_event;
 
     watchdog watchdog_inst (
-        .i_clk(i_clk)  
-        .i_rst(i_rst)
-        .i_timer_en(wd_timer_en)
-        .i_signal_obs(wd_signal_obs)
-        .i_signal_match(1'b1)
-        .o_timeout_event(timeout_event)
-        .o_signal_match_event (signal_match_event) 
+        .i_clk(i_clk),
+        .i_rst(i_rst),
+        .i_timer_en(wd_timer_en),
+        .i_signal_obs(wd_signal_obs),
+        .i_signal_match(1'b1),
+        .o_timeout_event(timeout_event),
+        .o_signal_match_event (signal_match_event)
     );
 
 endmodule
