@@ -69,7 +69,7 @@ The overall structure of the mapper takes on sort of a "piplined" approach where
 ## Hardware Specifications
 * Each FPGA (mapper or demapper) will display the current calculated CRC in the module on the FPGA itself
   * If the CRC stays at 8 bits, we won't have to use the 7-segment display, instead we can use LEDs on the board
-* ==For demonstration purposes a switch on the demapper FPGA will enable/disable "data corruption" as data comes into the demapper==
+* <mark>For demonstration purposes a switch on the demapper FPGA will enable/disable "data corruption" as data comes into the demapper</mark>
 * ==Another switch will enable the ARQ handshaking process==
 * Two wires will connect the FPGAs
   * One will be the main "optical fiber cable" that will send frame data to the demapper
