@@ -69,8 +69,8 @@ The overall structure of the mapper takes on sort of a "piplined" approach where
 ## Hardware Specifications
 * Each FPGA (mapper or demapper) will display the current calculated CRC in the module on the FPGA itself
   * If the CRC stays at 8 bits, we won't have to use the 7-segment display, instead we can use LEDs on the board
-* <mark>For demonstration purposes a switch on the demapper FPGA will enable/disable "data corruption" as data comes into the demapper</mark>
-* ==Another switch will enable the ARQ handshaking process==
+* *For demonstration purposes a switch on the demapper FPGA will enable/disable "data corruption" as data comes into the demapper*
+* *Another switch will enable the ARQ handshaking process*
 * Two wires will connect the FPGAs
   * One will be the main "optical fiber cable" that will send frame data to the demapper
   * Anoter will be the "ACK" cable which will send acknowledgements to the mapper FPGA indicating successful/unsuccessful frame transmission
@@ -80,10 +80,10 @@ The overall structure of the mapper takes on sort of a "piplined" approach where
 **Insert picture here**
 
 ## Verification Specifications
-* Basic testbench for mapper ==(Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions==
-* Basic testbench for demapper ==(Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions==
-* Testbench for mapper and demapper ==(Maybe FIFO/UART?), use ARQ, definitely include self-checking==
-* ==Try to keep test data uinque but also readable.  For example, for every payload byte sent into the mapper, increase the value by 1. Ex: Send in 0x01, then 0x02, etc.
+* Basic testbench for mapper *(Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions*
+* Basic testbench for demapper *(Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions*
+* Testbench for mapper and demapper *(Maybe FIFO/UART?), use ARQ, definitely include self-checking*
+* *Try to keep test data uinque but also readable.  For example, for every payload byte sent into the mapper, increase the value by 1. Ex: Send in 0x01, then 0x02, etc.*
 * **Implemented in VHDL**
 
 ## Cases to be Tested
@@ -91,7 +91,7 @@ The overall structure of the mapper takes on sort of a "piplined" approach where
   * Normal operation with no corruption and no ARQ enabled
   * Normal operation with corruption and no ARQ enabled
   * Normal operation with corruption and ARQ enabled
-  * ==There is a procedure for each of these situations==
+  * *There is a procedure for each of these situations*
 * **Top Level Sender & Receiver Testbench**
   * Same as above
   * Should receive the UART data from the receiver and write to a text file
