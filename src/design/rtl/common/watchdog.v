@@ -13,8 +13,8 @@ module watchdog (
 // counter for baud
 reg [11:0] baud_counter;
 
-wire signal_match_event;
-wire timeout_event;
+reg signal_match_event;
+reg timeout_event;
 
 // clk divider
 reg clk_s   [3:0]; // div source
@@ -22,13 +22,14 @@ reg clk_out;
 reg clk_div [3:0]; // div ff
 
 always @(posedge i_clk) begin
-    if(rst_n) begin
+    if(i_rst) begin
         clk_s[0] <= 1'b0;
     end else begin
         clk_s[0] <= !clk_s[0];
     end
 end
 
+genvar i;
 generate
     for (i = 1; i < 20; i=i+1) 
     begin : clk_divider
@@ -39,7 +40,7 @@ generate
             .o_q    (clk_div[i])
         );
     end
-endgenerate;
+endgenerate
 
 always @( posedge i_clk ) begin
    if (i_rst) begin
@@ -49,13 +50,13 @@ always @( posedge i_clk ) begin
    end
 end
 
-assign timeout_event = (baud_counter >= 'h2FA); // 2 seconds
-assign signal_match_event = i_signal_obs == i_signal_match;
-
 always @(posedge i_clk) begin
-    o_signal_match_event <= signal_match_event;
-    o_timeout_event      <= timeout_event && !signal_match_event;
+    timeout_event <= (baud_counter >= 'h2FA); // 2 seconds
+    signal_match_event <= i_signal_obs == i_signal_match;
 end
+
+assign o_signal_match_event = signal_match_event;
+assign o_timeout_event      = timeout_event && !signal_match_event;
 
 
 

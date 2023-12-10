@@ -224,8 +224,8 @@ module rec_tran (
         .s_axis_tready   (/*(don't worry, it WILL be ready)*/),    
         .s_axis_tdata    (otn_tx_data_arr_r[9:2]),     
         .m_axis_tvalid   (m_fifo_frame_data_valid),    
-        .m_axis_tready   (i_tx_fifo_ready && !(r_state == capture_pattern)), // don't send out anything until frame pattern is fully captured. 
-        .m_axis_tdata    (o_frame_data), 
+        .m_axis_tready   (i_tx_fifo_ready && !( r_state == capture_pattern )), // don't send out anything until frame pattern is fully captured. 
+        .m_axis_tdata    (o_frame_data),  
         .almost_empty    (/* open */)
     );
     
