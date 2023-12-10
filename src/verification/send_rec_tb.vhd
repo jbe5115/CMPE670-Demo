@@ -33,6 +33,7 @@ architecture tb of send_rec_tb is
     component top is
         port (
             i_clk, i_rst, i_uart_rx, i_arq_en, i_corrupt_en : in std_logic;
+            i_corrupt_seed : in std_logic_vector(7 downto 0);
             o_uart_tx : out std_logic;
             o_crc_val_sen, o_crc_val_rec : out std_logic_vector(7 downto 0)
         );
@@ -47,6 +48,7 @@ begin
         i_uart_rx     => i_uart_rx,
         i_arq_en      => arq_en,
         i_corrupt_en  => corrupt_en,
+        i_corrupt_seed => x"FB",
         o_uart_tx     => uart_tx,
         o_crc_val_sen => send_crc_val,
         o_crc_val_rec => rec_crc_val
@@ -140,7 +142,7 @@ begin
     begin
         sys_rst         <= '1';
         arq_en          <= '1';
-        corrupt_en      <= '0';
+        corrupt_en      <= '1';
         
         file_open(stim, payload_file, read_mode);
         
@@ -157,25 +159,25 @@ begin
             end loop;
             EOL_N := true;
         end loop;
-        
+        corrupt_en <= '0';
         wait for 50 ms;
         -- "refresh" file
         file_close(stim);
-        file_open(stim, payload_file, read_mode);
-        wait for 5 us;
+        --file_open(stim, payload_file, read_mode);
+        --wait for 5 us;
         
-        while not endfile(stim) loop
-            readline(stim, L_IN);          -- get line
-            hread(L_IN, byte_out, EOL_N); -- get first byte
-            while (EOL_N = true) loop
-                send_char(unsigned(byte_out));
-                hread(L_IN, byte_out, EOL_N);
-                wait for 0 ns;
-            end loop;
-            EOL_N := true;
-        end loop;    
+--        while not endfile(stim) loop
+--            readline(stim, L_IN);          -- get line
+--            hread(L_IN, byte_out, EOL_N); -- get first byte
+--            while (EOL_N = true) loop
+--                send_char(unsigned(byte_out));
+--                hread(L_IN, byte_out, EOL_N);
+--                wait for 0 ns;
+--            end loop;
+--            EOL_N := true;
+--        end loop;    
         
-        wait for 400 ms;  
+        wait for 500 ms;  
         
         assert false
             report "End of simulation"
