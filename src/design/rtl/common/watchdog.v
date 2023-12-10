@@ -17,17 +17,18 @@ reg signal_match_event;
 reg timeout_event;
 
 // clk divider
-reg clk_s   [3:0]; // div source
-reg clk_out;
-reg clk_div [3:0]; // div ff
+wire [19:0] clk_s; // div source
+reg [19:0] clk_div; // div ff
 
 always @(posedge i_clk) begin
     if(i_rst) begin
-        clk_s[0] <= 1'b0;
+        clk_div[0] <= 1'b0;
     end else begin
-        clk_s[0] <= !clk_s[0];
+        clk_div[0]       <= !clk_s[0];
     end
 end
+
+assign clk_s[19:1] = clk_div[19:1];
 
 genvar i;
 generate
@@ -36,7 +37,7 @@ generate
         dff dff_inst (
             .i_clk  (clk_div[i - 1]),
             .i_rst  (i_rst),
-            .i_d    (clk_s[i]),
+            .i_d    (!clk_s[i]),
             .o_q    (clk_div[i])
         );
     end
