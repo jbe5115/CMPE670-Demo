@@ -15,8 +15,8 @@ Verilog tutorial: https://www.asic-world.com/verilog/veritut.html
 * The first 16 byte colums of each row will be overhead
 * The next 1024 will be for image data
 * The last byte column will be for an 8-bit CRC, which will only be inserted on the last row, the first three rows will have zeros in this column
-* The first six bytes of ever frame must be 0xF6F6F6282828 (in overhead)
-* These sizes allow for the perfect fit of a 64 by 46 image (4096 bytes in payload)
+* The first six bytes of every frame must be 0xF6F6F6282828 (in overhead)
+* These sizes allow for the perfect fit of a 64 by 64 image (4096 bytes in payload)
 
 ## Mapper Specifications
 Some modules that will be in the mapper (in general datapath order)
@@ -59,9 +59,40 @@ The overall structure of the mapper takes on sort of a "piplined" approach where
 * **UART TX Module with AXI Stream Wrapper**
 
 ## ARQ Handshake Specifications
+* The sender (mapper FPGA) must save the data in some sort of memory as it transmits to the receiver (demapper FPGA)
+* If the sender must retransmit, it will transmit out of the memory, rather than the data coming out of the mapper
+  * The mapper will be idle during this time and will **NOT** request data from the RX FIFO
+* For our implementation, some sort of ACK must be sent from the receiver to the sender, indicating that the frame transmission was successful
+  * This could be a two-bit ACK (one value indicating success, another failure) **OR** just a single bit ACK to indicate success
+  * If single bit ACK is implemented (which follows the stop-and-wait ARQ procedure) then no ACK would indicate failure.  This would require "timeout" logic on the sender interface 
 
 ## Hardware Specifications
+* Each FPGA (mapper or demapper) will display the current calculated CRC in the module on the FPGA itself
+  * If the CRC stays at 8 bits, we won't have to use the 7-segment display, instead we can use LEDs on the board
+* *For demonstration purposes a switch on the demapper FPGA will enable/disable "data corruption" as data comes into the demapper*
+* *Another switch will enable the ARQ handshaking process*
+* Two wires will connect the FPGAs
+  * One will be the main "optical fiber cable" that will send frame data to the demapper
+  * Anoter will be the "ACK" cable which will send acknowledgements to the mapper FPGA indicating successful/unsuccessful frame transmission
+* The Nexsys4 DDR Pmod ports will be used to transmit data between the FPGAs
+  * Dont use the JXADC Pmod ports, use the values seen below
+
+**Insert picture here**
 
 ## Verification Specifications
+* Basic testbench for mapper *(Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions*
+* Basic testbench for demapper *(Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions*
+* Testbench for mapper and demapper *(Maybe FIFO/UART?), use ARQ, definitely include self-checking*
+* *Try to keep test data uinque but also readable.  For example, for every payload byte sent into the mapper, increase the value by 1. Ex: Send in 0x01, then 0x02, etc.*
+* **Implemented in VHDL**
 
 ## Cases to be Tested
+* **Sender Testbench**
+  * Normal operation with no corruption and no ARQ enabled
+  * Normal operation with corruption and no ARQ enabled
+  * Normal operation with corruption and ARQ enabled
+  * *There is a procedure for each of these situations*
+* **Top Level Sender & Receiver Testbench**
+  * Same as above
+  * Should receive the UART data from the receiver and write to a text file
+  * Original and received text files can be compared
