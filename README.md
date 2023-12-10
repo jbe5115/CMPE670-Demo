@@ -15,7 +15,7 @@ Verilog tutorial: https://www.asic-world.com/verilog/veritut.html
 * The first 16 byte colums of each row will be overhead
 * The next 1024 will be for image data
 * The last byte column will be for an 8-bit CRC, which will only be inserted on the last row, the first three rows will have zeros in this column
-* The first six bytes of ever frame must be 0xF6F6F6282828 (in overhead)
+* The first six bytes of every frame must be 0xF6F6F6282828 (in overhead)
 * These sizes allow for the perfect fit of a 64 by 46 image (4096 bytes in payload)
 
 ## Mapper Specifications
