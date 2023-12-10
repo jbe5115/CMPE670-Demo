@@ -37,6 +37,3 @@ set_property IOSTANDARD LVCMOS33 [get_ports i_otn_tx_ack]
 #JA1
 set_property PACKAGE_PIN C17 [get_ports o_otn_rx_data]
 set_property IOSTANDARD LVCMOS33 [get_ports o_otn_rx_data]
-
-# Set pullup resistor for input
- set_property PULLUP true [get_ports { i_otn_tx_ack }]

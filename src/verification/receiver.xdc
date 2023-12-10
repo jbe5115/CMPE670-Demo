@@ -50,4 +50,4 @@ set_property PACKAGE_PIN C17 [get_ports i_otn_tx_data]
 set_property IOSTANDARD LVCMOS33 [get_ports i_otn_tx_data]
 
 # Set pullup resistor for input
- set_property PULLUP true [get_ports { i_otn_tx_data }]
+ set_property PULLDOWN true [get_ports { i_otn_tx_data }]
