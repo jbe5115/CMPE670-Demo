@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="28593307083333fs"></ZoomStartTime>
-      <ZoomEndTime time="84770494583334fs"></ZoomEndTime>
-      <Cursor1Time time="75407630000000fs"></Cursor1Time>
+      <ZoomStartTime time="31464751893145fs"></ZoomStartTime>
+      <ZoomEndTime time="31582208621371fs"></ZoomEndTime>
+      <Cursor1Time time="31562632500000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="219"></NameColumnWidth>
-      <ValueColumnWidth column_width="85"></ValueColumnWidth>
+      <ValueColumnWidth column_width="81"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="18" />
+   <WVObjectSize size="19" />
    <wvobject fp_name="group14" type="group">
       <obj_property name="label">stimulus</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -116,6 +116,10 @@
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
+   <wvobject fp_name="/send_rec_tb/retrans_en" type="logic">
+      <obj_property name="ElementShortName">retrans_en</obj_property>
+      <obj_property name="ObjectShortName">retrans_en</obj_property>
+   </wvobject>
    <wvobject fp_name="/send_rec_tb/sys_rst" type="logic">
       <obj_property name="ElementShortName">sys_rst</obj_property>
       <obj_property name="ObjectShortName">sys_rst</obj_property>
@@ -167,7 +171,6 @@
    <wvobject fp_name="group181" type="group">
       <obj_property name="label">send_rec_sender</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="group586" type="group">
          <obj_property name="label">fifo rx</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -211,11 +214,9 @@
       <wvobject fp_name="group253" type="group">
          <obj_property name="label">mapper</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group665" type="group">
             <obj_property name="label">map fpc</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/mapper_inst/fpc_map_inst/i_clk" type="logic">
                <obj_property name="ElementShortName">i_clk</obj_property>
                <obj_property name="ObjectShortName">i_clk</obj_property>
@@ -831,6 +832,7 @@
    <wvobject fp_name="group387" type="group">
       <obj_property name="label">send_rec_receiver</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="group150" type="group">
          <obj_property name="label">rec tran</obj_property>
          <obj_property name="DisplayName">label</obj_property>
