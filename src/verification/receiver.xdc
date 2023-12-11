@@ -21,6 +21,10 @@ set_property -dict {PACKAGE_PIN U8  IOSTANDARD LVCMOS33} [get_ports {i_corrupt_s
 set_property -dict {PACKAGE_PIN T8  IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[0]}]
 
 # ==== LEDs ====
+
+set_property PACKAGE_PIN N15 [get_ports {o_crc_err}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_err}]
+
 set_property PACKAGE_PIN H17 [get_ports {o_crc_val[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val[0]}]
 set_property PACKAGE_PIN K15 [get_ports {o_crc_val[1]}]
@@ -38,15 +42,23 @@ set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val[6]}]
 set_property PACKAGE_PIN U16 [get_ports {o_crc_val[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val[7]}]
 
+# These next few properties ASSURE that the system works properly :)))
+set_property PACKAGE_PIN D14 [get_ports {o_rt_state[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_rt_state[0]}]
+set_property PACKAGE_PIN F16 [get_ports {o_rt_state[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_rt_state[1]}]
+set_property PACKAGE_PIN G16 [get_ports {o_rt_state[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_rt_state[2]}]
+
 # ==== UART ====
 set_property -dict {PACKAGE_PIN D4 IOSTANDARD LVCMOS33} [get_ports o_uart_tx]
 
 # ==== I/O Transmission ====
 #JA2
-set_property PACKAGE_PIN D18 [get_ports o_otn_rx_ack]
+set_property PACKAGE_PIN D17 [get_ports o_otn_rx_ack]
 set_property IOSTANDARD LVCMOS33 [get_ports o_otn_rx_ack]
 #JA1
-set_property PACKAGE_PIN C17 [get_ports i_otn_tx_data]
+set_property PACKAGE_PIN E17 [get_ports i_otn_tx_data]
 set_property IOSTANDARD LVCMOS33 [get_ports i_otn_tx_data]
 
 # Set pullup resistor for input
