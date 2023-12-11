@@ -35,7 +35,10 @@ module sender (
     wire [7:0]   map_frame_data;
     wire         map_frame_data_valid;
     wire         map_frame_data_fas;
+    
     wire         line_fifo_ready;
+    wire [7:0]   line_frame_data;
+    wire         line_frame_data_valid;
     
     // TRAN REC IN/OUT
     wire [7:0]   tr_frame_data;
@@ -103,9 +106,9 @@ module sender (
         .s_axis_aresetn  (~(i_rst || tr_send_complete)),
         .s_axis_aclk     (i_clk),
         // mapper -> FIFO in
-        .s_axis_tvalid   (map_frame_data_valid),
+        .s_axis_tvalid   (line_frame_data_valid),
         .s_axis_tready   (line_fifo_ready),
-        .s_axis_tdata    (map_frame_data),
+        .s_axis_tdata    (line_frame_data),
         // FIFO out -> tran_rec
         .m_axis_tvalid   (lf_frame_data_valid),
         .m_axis_tready   (lf_ready),
@@ -116,6 +119,11 @@ module sender (
     // don't read out of line FIFO until: tran_rec FIFO is ready, retrans is occuring, and line FIFO write side is ready
     assign lf_ready = tr_fifo_ready && tr_read_line_fifo && line_fifo_ready;
     
+    // line FIFO data in
+    assign line_frame_data       = (tr_read_line_fifo) ? lf_frame_data       : map_frame_data;
+    assign line_frame_data_valid = (tr_read_line_fifo) ? lf_frame_data_valid : map_frame_data_valid;
+    
+    // tran rec AXIS data in
     assign tr_frame_data       = (tr_read_line_fifo) ? lf_frame_data       : map_frame_data;
     assign tr_frame_data_valid = (tr_read_line_fifo) ? lf_frame_data_valid : map_frame_data_valid;
     

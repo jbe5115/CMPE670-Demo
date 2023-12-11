@@ -142,7 +142,7 @@ begin
     begin
         sys_rst         <= '1';
         arq_en          <= '1';
-        corrupt_en      <= '0';
+        corrupt_en      <= '1';
         
         file_open(stim, payload_file, read_mode);
         
@@ -159,12 +159,12 @@ begin
             end loop;
             EOL_N := true;
         end loop;
-        corrupt_en <= '0';
-        wait for 50 ms;
         -- "refresh" file
-        file_close(stim);
         --file_open(stim, payload_file, read_mode);
         --wait for 5 us;
+        file_close(stim);
+        --corrupt_en <= '0';
+        wait for 50 ms;
         
 --        while not endfile(stim) loop
 --            readline(stim, L_IN);          -- get line

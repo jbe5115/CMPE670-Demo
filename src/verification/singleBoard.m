@@ -9,6 +9,7 @@ im_orig = imread(filename);
 numRows = 64;
 numCols = 64;
 imgSize = 64 * 64;
+im_final = [];
 
 % Clear any existing serial ports
 delete(instrfind);
@@ -26,8 +27,12 @@ fprintf('Sending image data to sender FPGA... '); tic;
 fwrite(serialPort1, im_orig(:), 'uint8'); toc;
 
 % read back image from receiver
-fprintf('Reading image data from receiver FPGA... '); tic;
-im_final = fread(serialPort1, imgSize, 'uint8'); toc;
+% this while loop essentially works around the annoying serial timeout
+% warning
+while (isempty(im_final))
+    fprintf('Reading image data from receiver FPGA... '); tic;
+    im_final = fread(serialPort1, imgSize, 'uint8'); toc;
+end
 
 % Reshape
 im_final = reshape(im_final, [numRows numCols]);

@@ -52,6 +52,9 @@ module tran_rec (
     // o_otn_rx_data register
     reg        c_otn_rx_data, r_otn_rx_data;
     
+    // trans_complete 40-cycle counter state
+    reg [5:0]  c_tc_count, r_tc_count;
+    
     
     // clock domain synchronization registers for i_otn_tx_ack
     // CURRENT ACK FORMAT: i_otn_tx_ack is held high by default. Upon detection of a low bit (start bit),
@@ -139,7 +142,9 @@ module tran_rec (
                     c_state = (r_otn_tx_ack) ? trans_complete : send_mf_wait;
                 end
                 trans_complete : begin
-                    c_state = idle;
+                    if (r_tc_count == 40) begin
+                        c_state = idle;
+                    end
                 end
                 send_mf_wait : begin
                     c_state = (retrans_en_edge) ? send_mem_frame : send_mf_wait;
@@ -239,6 +244,19 @@ module tran_rec (
         end
     end
     
+    // transmit complete counter process
+    always @(*) begin
+        if (i_rst) begin
+            c_tc_count = 0;
+        end else begin
+            if (r_state == trans_complete) begin
+                c_tc_count = r_tc_count + 1;
+            end else begin
+                c_tc_count = 0;
+            end
+        end
+    end
+    
     // scount5 counter process
     always @(posedge i_clk) begin
         if (i_rst) begin
@@ -261,6 +279,7 @@ module tran_rec (
         r_bit_count    <= c_bit_count;
         r_current_byte <= c_current_byte;
         r_otn_rx_data  <= c_otn_rx_data;
+        r_tc_count     <= c_tc_count;
         if (i_rst) begin
             otn_tx_ack_sync_arr <= 3'd0;
             retrans_en_arr <= 3'd0;
