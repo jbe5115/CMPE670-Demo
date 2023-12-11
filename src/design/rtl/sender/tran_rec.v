@@ -55,6 +55,11 @@ module tran_rec (
     // trans_complete 40-cycle counter state
     reg [5:0]  c_tc_count, r_tc_count;
     
+    // tran_rec fifo read data in count (to avoid reading in more than necessary)
+    reg [12:0] c_tr_fifo_byte_count, r_tr_fifo_byte_count;
+    
+    wire tr_fifo_data_valid, tr_fifo_ready;
+    
     
     // clock domain synchronization registers for i_otn_tx_ack
     // CURRENT ACK FORMAT: i_otn_tx_ack is held high by default. Upon detection of a low bit (start bit),
@@ -81,8 +86,8 @@ module tran_rec (
     // direct output assignments
     assign o_send_complete  = (r_state == trans_complete);
     assign o_read_line_fifo = (r_state == send_mem_frame);
+    assign o_fifo_ready     = tr_fifo_ready;
     assign o_retrans_req    = r_retrans_req;
-    assign o_fifo_ready     = s_fifo_ready;
     assign o_otn_rx_data    = r_otn_rx_data;
     assign o_retrans_wait   = (r_state == send_mf_wait);
     
@@ -92,12 +97,16 @@ module tran_rec (
     assign baud_en  = i_sclk_en_16_x_baud && (scount5 == 5'd19);
     
     assign retrans_en_edge = !retrans_en_arr[2] && retrans_en_arr[1];
+    
+    // TR FIFO SLAVE INTERFACE
+    assign tr_fifo_data_valid = i_frame_data_valid && s_fifo_ready && (r_tr_fifo_byte_count < 4164);
+    assign tr_fifo_ready      = s_fifo_ready && (r_tr_fifo_byte_count < 4164);
 
     // RX FIFO (Takes in mapped OTN data, sends it out of FPGA thru state machine)
     axis_data_fifo_rx axis_fifo_inst (
         .s_axis_aresetn  (~i_rst),  
         .s_axis_aclk     (i_clk),        
-        .s_axis_tvalid   (i_frame_data_valid),    
+        .s_axis_tvalid   (tr_fifo_data_valid),    
         .s_axis_tready   (s_fifo_ready),    
         .s_axis_tdata    (i_frame_data),     
         .m_axis_tvalid   (m_fifo_data_valid),    
@@ -257,6 +266,21 @@ module tran_rec (
         end
     end
     
+    always @(*) begin
+        c_tr_fifo_byte_count = r_tr_fifo_byte_count;
+        if (i_rst) begin
+            c_tr_fifo_byte_count = 0;
+        end else begin
+            if ((r_state == send_frame) || (r_state == send_mem_frame)) begin
+                if (tr_fifo_data_valid && tr_fifo_ready) begin
+                    c_tr_fifo_byte_count = r_tr_fifo_byte_count + 1;
+                end
+            end else begin
+                c_tr_fifo_byte_count = 0;
+            end
+        end
+    end
+    
     // scount5 counter process
     always @(posedge i_clk) begin
         if (i_rst) begin
@@ -272,14 +296,15 @@ module tran_rec (
     
     always @(posedge i_clk) begin : RegProc
         integer I;
-        r_state        <= c_state;
-        r_byte_count   <= c_byte_count;
-        r_otn_tx_ack   <= c_otn_tx_ack;
-        r_retrans_req  <= c_retrans_req;
-        r_bit_count    <= c_bit_count;
-        r_current_byte <= c_current_byte;
-        r_otn_rx_data  <= c_otn_rx_data;
-        r_tc_count     <= c_tc_count;
+        r_state              <= c_state;
+        r_byte_count         <= c_byte_count;
+        r_otn_tx_ack         <= c_otn_tx_ack;
+        r_retrans_req        <= c_retrans_req;
+        r_bit_count          <= c_bit_count;
+        r_current_byte       <= c_current_byte;
+        r_otn_rx_data        <= c_otn_rx_data;
+        r_tc_count           <= c_tc_count;
+        r_tr_fifo_byte_count <= c_tr_fifo_byte_count;
         if (i_rst) begin
             otn_tx_ack_sync_arr <= 3'd0;
             retrans_en_arr <= 3'd0;

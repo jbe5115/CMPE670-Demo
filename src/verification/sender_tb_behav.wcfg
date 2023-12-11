@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="31464751893145fs"></ZoomStartTime>
-      <ZoomEndTime time="31582208621371fs"></ZoomEndTime>
-      <Cursor1Time time="31562632500000fs"></Cursor1Time>
+      <ZoomStartTime time="24627921034360fs"></ZoomStartTime>
+      <ZoomEndTime time="25315594793128fs"></ZoomEndTime>
+      <Cursor1Time time="25200982500000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="219"></NameColumnWidth>
-      <ValueColumnWidth column_width="81"></ValueColumnWidth>
+      <ValueColumnWidth column_width="77"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="19" />
    <wvobject fp_name="group14" type="group">
@@ -171,6 +171,7 @@
    <wvobject fp_name="group181" type="group">
       <obj_property name="label">send_rec_sender</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="group586" type="group">
          <obj_property name="label">fifo rx</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -507,6 +508,7 @@
       <wvobject fp_name="group223" type="group">
          <obj_property name="label">tran_rec</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group263" type="group">
             <obj_property name="label">tran_rec fifo</obj_property>
             <obj_property name="DisplayName">label</obj_property>
@@ -682,6 +684,32 @@
          <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/tran_rec_inst/m_fifo_data" type="array">
             <obj_property name="ElementShortName">m_fifo_data[7:0]</obj_property>
             <obj_property name="ObjectShortName">m_fifo_data[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/tran_rec_inst/c_tc_count" type="array">
+            <obj_property name="ElementShortName">c_tc_count[5:0]</obj_property>
+            <obj_property name="ObjectShortName">c_tc_count[5:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/tran_rec_inst/r_tc_count" type="array">
+            <obj_property name="ElementShortName">r_tc_count[5:0]</obj_property>
+            <obj_property name="ObjectShortName">r_tc_count[5:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/tran_rec_inst/c_tr_fifo_byte_count" type="array">
+            <obj_property name="ElementShortName">c_tr_fifo_byte_count[12:0]</obj_property>
+            <obj_property name="ObjectShortName">c_tr_fifo_byte_count[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/tran_rec_inst/r_tr_fifo_byte_count" type="array">
+            <obj_property name="ElementShortName">r_tr_fifo_byte_count[12:0]</obj_property>
+            <obj_property name="ObjectShortName">r_tr_fifo_byte_count[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/tran_rec_inst/tr_fifo_data_valid" type="logic">
+            <obj_property name="ElementShortName">tr_fifo_data_valid</obj_property>
+            <obj_property name="ObjectShortName">tr_fifo_data_valid</obj_property>
+         </wvobject>
+         <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/tran_rec_inst/tr_fifo_ready" type="logic">
+            <obj_property name="ElementShortName">tr_fifo_ready</obj_property>
+            <obj_property name="ObjectShortName">tr_fifo_ready</obj_property>
          </wvobject>
          <wvobject fp_name="/send_rec_tb/top_inst/sender_inst/tran_rec_inst/idle" type="array">
             <obj_property name="ElementShortName">idle[2:0]</obj_property>
