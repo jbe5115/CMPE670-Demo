@@ -20,7 +20,10 @@ module tran_rec (
     output      o_otn_rx_data,
     input       i_otn_tx_ack,
     // fpga switch input
-    input       i_arq_en
+    output [2:0] o_tr_state,
+    input        i_arq_en,
+    input        i_retrans_en,
+    output       o_retrans_wait
 );
 
     // clock control
@@ -35,7 +38,8 @@ module tran_rec (
     localparam read_ack       = 3'b011;
     localparam check_ack      = 3'b100;
     localparam trans_complete = 3'b101;
-    localparam send_mem_frame = 3'b110;
+    localparam send_mf_wait   = 3'b110;
+    localparam send_mem_frame = 3'b111;
     reg [2:0] c_state, r_state;
     
     // total byte count for transmission
@@ -66,6 +70,10 @@ module tran_rec (
     wire       s_fifo_ready, m_fifo_ready;
     wire       m_fifo_data_valid;
     wire [7:0] m_fifo_data;
+    
+    // retrans enable edge detector
+    wire       retrans_en_edge;
+    reg  [0:2] retrans_en_arr;
    
     // direct output assignments
     assign o_send_complete  = (r_state == trans_complete);
@@ -73,9 +81,14 @@ module tran_rec (
     assign o_retrans_req    = r_retrans_req;
     assign o_fifo_ready     = s_fifo_ready;
     assign o_otn_rx_data    = r_otn_rx_data;
+    assign o_retrans_wait   = (r_state == send_mf_wait);
+    
+    assign o_tr_state       = r_state;
     
     assign m_fifo_ready = ((r_state == send_frame) || (r_state == send_mem_frame)) && (r_bit_count == 3'd7) && baud_en;
     assign baud_en  = i_sclk_en_16_x_baud && (scount5 == 5'd19);
+    
+    assign retrans_en_edge = !retrans_en_arr[2] && retrans_en_arr[1];
 
     // RX FIFO (Takes in mapped OTN data, sends it out of FPGA thru state machine)
     axis_data_fifo_rx axis_fifo_inst (
@@ -123,10 +136,13 @@ module tran_rec (
                 end
                 check_ack : begin
                     // is the ACK good or bad???
-                    c_state = (r_otn_tx_ack) ? trans_complete : send_mem_frame;
+                    c_state = (r_otn_tx_ack) ? trans_complete : send_mf_wait;
                 end
                 trans_complete : begin
                     c_state = idle;
+                end
+                send_mf_wait : begin
+                    c_state = (retrans_en_edge) ? send_mem_frame : send_mf_wait;
                 end
                 send_mem_frame : begin
                     if (r_byte_count == 4165) begin // mem frame is done transmitting?
@@ -247,11 +263,19 @@ module tran_rec (
         r_otn_rx_data  <= c_otn_rx_data;
         if (i_rst) begin
             otn_tx_ack_sync_arr <= 3'd0;
-        end else if (baud_en) begin
-            for (I = 0; I < 3; I = I + 1) begin 
-                if (I == 0) begin otn_tx_ack_sync_arr[0] <= i_otn_tx_ack;             end 
-                else        begin otn_tx_ack_sync_arr[I] <= otn_tx_ack_sync_arr[I-1]; end
+            retrans_en_arr <= 3'd0;
+        end else begin
+            if (baud_en) begin
+                for (I = 0; I < 3; I = I + 1) begin 
+                    if (I == 0) begin otn_tx_ack_sync_arr[0] <= i_otn_tx_ack;             end 
+                    else        begin otn_tx_ack_sync_arr[I] <= otn_tx_ack_sync_arr[I-1]; end
+                end
             end
+            for (I = 0; I < 3; I = I + 1) begin
+                if (I == 0) begin retrans_en_arr[0] <= i_retrans_en;        end
+                else        begin retrans_en_arr[I] <= retrans_en_arr[I-1]; end
+            end
+            
         end
     end
 

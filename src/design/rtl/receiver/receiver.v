@@ -10,6 +10,7 @@ module receiver (
     input  [7:0]  i_corrupt_seed,
     output        o_uart_tx,
     output [7:0]  o_crc_val,
+    output [2:0]  o_rt_state,
     // TRANSMIT INTERFACE
     input         i_otn_tx_data,
     output        o_otn_rx_ack
@@ -61,6 +62,7 @@ module receiver (
         // input control signals
         .i_tx_fifo_ready     (demap_pyld_fifo_ready),
         // data in/out of the FPGA
+        .o_rt_state          (o_rt_state),
         .i_otn_tx_data       (i_otn_tx_data),
         .o_otn_rx_ack        (o_otn_rx_ack)
     );

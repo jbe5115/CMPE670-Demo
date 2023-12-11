@@ -9,6 +9,9 @@ module sender (
     input          i_uart_rx,
     input          i_arq_en,
     output [7:0]   o_crc_val,
+    output [2:0]   o_tr_state,
+    input          i_retrans_en,
+    output         o_retrans_wait,
     // TRANSMIT INTERFACE
     output         o_otn_rx_data,
     input          i_otn_tx_ack
@@ -135,7 +138,10 @@ module sender (
         .o_otn_rx_data      (o_otn_rx_data),
         .i_otn_tx_ack       (i_otn_tx_ack),
         // FPGA switch input
-        .i_arq_en           (i_arq_en)
+        .o_tr_state         (o_tr_state),
+        .i_arq_en           (i_arq_en),
+        .i_retrans_en       (i_retrans_en),
+        .o_retrans_wait     (o_retrans_wait)
     );
     
     
