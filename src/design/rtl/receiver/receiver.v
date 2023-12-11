@@ -9,6 +9,7 @@ module receiver (
     input         i_corrupt_en,
     input  [7:0]  i_corrupt_seed,
     output        o_uart_tx,
+    output        o_crc_err,
     output [7:0]  o_crc_val,
     output [2:0]  o_rt_state,
     // TRANSMIT INTERFACE
@@ -45,6 +46,8 @@ module receiver (
     wire         demap_arq_en;
     wire         demap_arq_en_valid;
     reg          c_demap_arq_en, r_demap_arq_en;
+    
+    assign o_crc_err = r_demap_crc_err;
     
     // Serial receiver & ACK Transmitter
     rec_tran rec_tran_inst (
