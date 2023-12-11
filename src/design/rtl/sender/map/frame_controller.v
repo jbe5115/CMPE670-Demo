@@ -57,11 +57,6 @@ module frame_controller (
                  o_frame_data        <= 8'b0;
                  o_frame_data_valid  <= 1'b1; 
                  o_frame_data_fas    <= 1'b0;
-            // if the current column is 1040 on any row, output all zeros
-            end else if(i_col_cnt == 1040 && !i_pyld_data_valid) begin
-                 o_frame_data        <= 8'b0;
-                 o_frame_data_valid  <= 1'b1; 
-                 o_frame_data_fas    <= 1'b0;
             // on all other cases, if the incoming data is valid output it directly.
             end else if(i_pyld_data_valid) begin
                  o_frame_data        <= i_pyld_data;
@@ -72,6 +67,11 @@ module frame_controller (
                 o_frame_data_valid   <= i_pyld_data_valid;
                 o_frame_data_fas     <= 1'b0;
             end
+        // if the current column is 1040 on any row, output all zeros
+        end else if(i_col_cnt == 1040 && !i_pyld_data_valid) begin
+                 o_frame_data        <= 8'b0;
+                 o_frame_data_valid  <= 1'b1; 
+                 o_frame_data_fas    <= 1'b0;
         end else begin
             o_frame_data         <= i_pyld_data;
             o_frame_data_valid   <= i_pyld_data_valid;

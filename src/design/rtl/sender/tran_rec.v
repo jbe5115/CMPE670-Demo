@@ -82,7 +82,7 @@ module tran_rec (
     assign o_send_complete  = (r_state == trans_complete);
     assign o_read_line_fifo = (r_state == send_mem_frame);
     assign o_retrans_req    = r_retrans_req;
-    assign o_fifo_ready     = s_fifo_ready;
+    assign o_fifo_ready     = s_fifo_ready && baud_en;
     assign o_otn_rx_data    = r_otn_rx_data;
     assign o_retrans_wait   = (r_state == send_mf_wait);
     
@@ -262,7 +262,7 @@ module tran_rec (
         if (i_rst) begin
             scount5 <= 0;
         end else if (i_sclk_en_16_x_baud) begin
-            if ((r_state == send_frame) || (r_state == send_mem_frame) || (r_state == ack_wait) || (r_state == read_ack)) begin
+            if ((r_state == idle) || (r_state == send_frame) || (r_state == send_mem_frame) || (r_state == ack_wait) || (r_state == read_ack)) begin
                 scount5 <= (scount5 == 19) ? 0 : scount5 + 1;
             end else begin
                 scount5 <= 0;

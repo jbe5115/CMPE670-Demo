@@ -120,8 +120,8 @@ module sender (
     assign lf_ready = tr_fifo_ready && tr_read_line_fifo && line_fifo_ready;
     
     // line FIFO data in
-    assign line_frame_data       = (tr_read_line_fifo) ? lf_frame_data       : map_frame_data;
-    assign line_frame_data_valid = (tr_read_line_fifo) ? lf_frame_data_valid : map_frame_data_valid;
+    assign line_frame_data       = (tr_read_line_fifo) ? lf_frame_data                          : map_frame_data;
+    assign line_frame_data_valid = (tr_read_line_fifo) ? (lf_frame_data_valid && tr_fifo_ready) : map_frame_data_valid;
     
     // tran rec AXIS data in
     assign tr_frame_data       = (tr_read_line_fifo) ? lf_frame_data       : map_frame_data;

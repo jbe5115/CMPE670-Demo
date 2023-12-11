@@ -69,7 +69,7 @@ module fpc # (
                     end
                  // If i_valid is low and the current column is 0-15 or 1040, the FPC can increment.
                  // If the current column count is 1040, next cycle it should be set to zero and the row count should increment.
-                end else if(!i_valid && col_cnt == 1040 && i_enable) begin
+                end else if(!i_valid && col_cnt == 1040) begin
                     col_cnt = 0;
                     row_cnt = row_cnt + 1;
                 end else if(!i_valid && col_cnt < 16 && i_enable) begin
