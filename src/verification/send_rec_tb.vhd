@@ -20,6 +20,7 @@ architecture tb of send_rec_tb is
     signal  rec_crc_val    :  std_logic_vector(7 downto 0);
     signal  send_crc_val   :  std_logic_vector(7 downto 0);
     signal  retrans_en     :  std_logic:= '1';
+    signal  retrans_wait   :  std_logic;
 
     -- Clock period definitions
     constant  clk_period   :  time     :=  5 ns; -- Does not represent current rate (100 MHz)
@@ -51,7 +52,7 @@ begin
         i_corrupt_en  => corrupt_en,
         i_corrupt_seed => x"FB",
         i_retrans_en   => retrans_en,
-        o_retrans_wait => open,
+        o_retrans_wait => retrans_wait,
         o_uart_tx     => uart_tx
         --o_crc_val_sen => send_crc_val,
         --o_crc_val_rec => rec_crc_val
@@ -174,7 +175,10 @@ begin
         --wait for 5 us;
         file_close(stim);
         --corrupt_en <= '0';
-        wait for 50 ms;
+        wait until retrans_wait = '1';
+        wait until retrans_wait = '1';
+        corrupt_en <= '0';
+        wait for 500 ms;
         
 --        while not endfile(stim) loop
 --            readline(stim, L_IN);          -- get line

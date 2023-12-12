@@ -85,7 +85,18 @@ set_property IOSTANDARD LVCMOS33 [get_ports {o_tr_state[1]}]
 set_property PACKAGE_PIN E18 [get_ports {o_tr_state[2]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_tr_state[2]}]
 
+# PMOD Ports (experimental)
+set_property PACKAGE_PIN H4 [get_ports {o_otn_rx_data}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_otn_rx_data}]
 
+set_property PACKAGE_PIN K1 [get_ports {i_otn_tx_data}]
+set_property IOSTANDARD LVCMOS33 [get_ports {i_otn_tx_data}]
+
+set_property PACKAGE_PIN E7 [get_ports {o_otn_rx_ack}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_otn_rx_ack}]
+
+set_property PACKAGE_PIN H2 [get_ports {i_otn_tx_ack}]
+set_property IOSTANDARD LVCMOS33 [get_ports {i_otn_tx_ack}]
 
 
 # ==== UART ====

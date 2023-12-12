@@ -20,11 +20,14 @@ module top (
     output [7:0]   o_crc_val_sen,
     output [7:0]   o_crc_val_rec,
     output [2:0]   o_tr_state,
-    output [2:0]   o_rt_state
+    output [2:0]   o_rt_state,
+    // sender interface
+    output         o_otn_rx_data,
+    input          i_otn_tx_ack,
+    // receiver interface   
+    input          i_otn_tx_data,
+    output         o_otn_rx_ack
 );
-
-wire otn_rx_data;
-wire otn_tx_ack;
 
 sender sender_inst (
     .i_clk          (i_clk),
@@ -35,8 +38,8 @@ sender sender_inst (
     .o_tr_state     (o_tr_state),
     .i_retrans_en   (i_retrans_en),
     .o_retrans_wait (o_retrans_wait),
-    .o_otn_rx_data  (otn_rx_data),
-    .i_otn_tx_ack   (otn_tx_ack)
+    .o_otn_rx_data  (o_otn_rx_data),
+    .i_otn_tx_ack   (i_otn_tx_ack)
 );
 
 receiver receiver_inst (
@@ -48,8 +51,8 @@ receiver receiver_inst (
     .o_crc_err      (o_crc_err),
     .o_crc_val      (o_crc_val_rec),
     .o_rt_state     (o_rt_state),
-    .i_otn_tx_data  (otn_rx_data),
-    .o_otn_rx_ack   (otn_tx_ack)
+    .i_otn_tx_data  (i_otn_tx_data),
+    .o_otn_rx_ack   (o_otn_rx_ack)
 );
 
 
