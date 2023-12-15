@@ -3,12 +3,19 @@
 Verilog tutorial: https://www.asic-world.com/verilog/veritut.html
 
 ## Working in Vivado
-* Do not have your project folder be in the git repo folder
+* Download Vivado 2019.1 and create a project, do not have your project folder be in the git repo folder
 * Put it in a seperate folder on your local disk and point to the source files in the git repo when you make the project
+* Add in all .v, .vhd, and .xdc files found under src to the project
 * **Make sure to also uncheck "Copy sources into project" when adding the files to your project**
-* Set target language to Verilog, simulator language to mixed
-* When you add the Xilinx IP AXIS FIFOs, give them maximum depth and enable almost empty, but do not enable almoxt full. (our FIFOs will be max size)
+* Set target language to Verilog, simulator language to VHDL
+* To add IP, click "IP Catalog" on flow naviagtor and search for "AXI-4 Stream Data FIFO"
+* When you add the Xilinx IP AXIS FIFOs, give them maximum depth and enable almost empty, but do not enable almost full. (our FIFOs will be max size for convenience)
 * Disable incremental compilation
+* Disable/enable testbenches as desired when running simulations. Make sure testbenches are not marked for synthesis
+* To run on hardware, synthesize and implement the design then generate a bitstream. Use top.xdc for constraints.
+* Program the FPGA and use the singleBoard.m script to send UART data into the system.
+* top.xdc provides more details on what switches, LEDs, and GPIO ports are used on the board. Connect the listed PMOD ports together with simple wires as mentioned.
+* One wire is used for the datapath, another is used for ACK.
 
 ## Frame Specifications (as of 11/14/23)
 * ODU Frame size: **4 rows, 1041 byte columns**
@@ -18,8 +25,8 @@ Verilog tutorial: https://www.asic-world.com/verilog/veritut.html
 * The first six bytes of every frame must be 0xF6F6F6282828 (in overhead)
 * These sizes allow for the perfect fit of a 64 by 64 image (4096 bytes in payload)
 
-## Mapper Specifications
-Some modules that will be in the mapper (in general datapath order)
+## Sender Specifications
+Some modules that will be in the sender (in general datapath order)
 * **UART RX Module with AXI Stream Wrapper**
 * **Xilinx AXI Stream FIFO** for RX direction
 
@@ -38,14 +45,12 @@ In most cases, a gearbox would be used at this point (to increase the data bus w
 * **Data Request**
   * Based on the current row and frame data from the FPC, the data request module will basically control our "AXI Stream Ready" that communicates with the FIFO.
   *   It will know when to request more data based on if the FIFO is empty or not, if the current frame position is overhead, etc.
-* **ARQ Interface** see section on ARQ Handshake Specifications for more details
 
-The overall structure of the mapper takes on sort of a "piplined" approach where our data "flows" through it.  The demapper will be EXTREMELY similar and probably more simple.
+The overall structure of the sender takes on sort of a "pipelined" approach where our data "flows" through it.
 
 **Insert high level diagram here**
 
-## Demapper Specifications
-* **ARQ Serial Interface**
+## Receiver Specifications
 * **Frame Position Counter (FPC)**
   * Same as in mapper, except it is used for demapping now
 * **CRC Calculator and Checker**
@@ -76,14 +81,10 @@ The overall structure of the mapper takes on sort of a "piplined" approach where
   * One will be the main "optical fiber cable" that will send frame data to the demapper
   * Anoter will be the "ACK" cable which will send acknowledgements to the mapper FPGA indicating successful/unsuccessful frame transmission
 * The Nexsys4 DDR Pmod ports will be used to transmit data between the FPGAs
-  * Dont use the JXADC Pmod ports, use the values seen below
-
-**Insert picture here**
 
 ## Verification Specifications
-* Basic testbench for mapper (Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions
-* Basic testbench for demapper (Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions
-* Testbench for mapper and demapper (Maybe FIFO/UART?), use ARQ, definitely include self-checking
+* Basic testbench for mapper, maybe include self-checking using assertions
+* Testbench for mapper and demapper, include self-checking
 * Try to keep test data uinque but also readable.  For example, for every payload byte sent into the mapper, increase the value by 1. Ex: Send in 0x01, then 0x02, etc.
 * **Implemented in VHDL**
 
