@@ -29,6 +29,7 @@ In most cases, a gearbox would be used at this point (to increase the data bus w
   * It will take in the current frame position (row and column) and based on this, either map the incoming data and output it or output overhead.
   * It will also output the additional 1 byte column at the end of each row, but will **NOT** calculate the CRC
 * **CRC Calculator**
+  * CRC polynomial coefficients: x^8 + x^2 + x + 1
   * After mapped data leaves the frame controller, it must be sent directly to the CRC calculator
   * Like the frame controller, the CRC calculator will also take in the current frame row and column counts, but with an extra clock cycle delay
   * The CRC is **ONLY** calculated on the payload of the frame, not overhead
@@ -69,8 +70,8 @@ The overall structure of the mapper takes on sort of a "piplined" approach where
 ## Hardware Specifications
 * Each FPGA (mapper or demapper) will display the current calculated CRC in the module on the FPGA itself
   * If the CRC stays at 8 bits, we won't have to use the 7-segment display, instead we can use LEDs on the board
-* *For demonstration purposes a switch on the demapper FPGA will enable/disable "data corruption" as data comes into the demapper*
-* *Another switch will enable the ARQ handshaking process*
+* For demonstration purposes a switch on the demapper FPGA will enable/disable "data corruption" as data comes into the demapper
+* Another switch will enable the ARQ handshaking process
 * Two wires will connect the FPGAs
   * One will be the main "optical fiber cable" that will send frame data to the demapper
   * Anoter will be the "ACK" cable which will send acknowledgements to the mapper FPGA indicating successful/unsuccessful frame transmission
@@ -80,10 +81,10 @@ The overall structure of the mapper takes on sort of a "piplined" approach where
 **Insert picture here**
 
 ## Verification Specifications
-* Basic testbench for mapper *(Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions*
-* Basic testbench for demapper *(Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions*
-* Testbench for mapper and demapper *(Maybe FIFO/UART?), use ARQ, definitely include self-checking*
-* *Try to keep test data uinque but also readable.  For example, for every payload byte sent into the mapper, increase the value by 1. Ex: Send in 0x01, then 0x02, etc.*
+* Basic testbench for mapper (Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions
+* Basic testbench for demapper (Maybe FIFO/UART? No ARQ), maybe include self-checking using assertions
+* Testbench for mapper and demapper (Maybe FIFO/UART?), use ARQ, definitely include self-checking
+* Try to keep test data uinque but also readable.  For example, for every payload byte sent into the mapper, increase the value by 1. Ex: Send in 0x01, then 0x02, etc.
 * **Implemented in VHDL**
 
 ## Cases to be Tested
