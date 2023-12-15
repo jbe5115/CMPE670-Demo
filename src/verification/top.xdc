@@ -7,6 +7,9 @@ create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_
 set_property PACKAGE_PIN M18 [get_ports i_rst]
 set_property IOSTANDARD LVCMOS33 [get_ports i_rst]
 
+set_property PACKAGE_PIN M17 [get_ports i_retrans_en]
+set_property IOSTANDARD LVCMOS33 [get_ports i_retrans_en]
+
 ## ==== Switches ====
 
 set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS33} [get_ports i_corrupt_en]
@@ -22,6 +25,13 @@ set_property -dict {PACKAGE_PIN U8  IOSTANDARD LVCMOS33} [get_ports {i_corrupt_s
 set_property -dict {PACKAGE_PIN T8  IOSTANDARD LVCMOS33} [get_ports {i_corrupt_seed[0]}]
 
 # ==== LEDs ====
+
+# RGB LEDs
+set_property PACKAGE_PIN G14 [get_ports {o_retrans_wait}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_retrans_wait}]
+
+set_property PACKAGE_PIN N15 [get_ports {o_crc_err}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_err}]
 
 # Sender CRC
 set_property PACKAGE_PIN H17 [get_ports {o_crc_val_sen[0]}]
@@ -41,6 +51,14 @@ set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val_sen[6]}]
 set_property PACKAGE_PIN U16 [get_ports {o_crc_val_sen[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val_sen[7]}]
 
+# These next few properties ASSURE that the system works properly :)))
+set_property PACKAGE_PIN D14 [get_ports {o_rt_state[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_rt_state[0]}]
+set_property PACKAGE_PIN F16 [get_ports {o_rt_state[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_rt_state[1]}]
+set_property PACKAGE_PIN G16 [get_ports {o_rt_state[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_rt_state[2]}]
+
 # Receiver CRC
 set_property PACKAGE_PIN V16 [get_ports {o_crc_val_rec[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val_rec[0]}]
@@ -58,6 +76,27 @@ set_property PACKAGE_PIN V12 [get_ports {o_crc_val_rec[6]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val_rec[6]}]
 set_property PACKAGE_PIN V11 [get_ports {o_crc_val_rec[7]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {o_crc_val_rec[7]}]
+
+# These next few properties ASSURE that the system works properly :)))
+set_property PACKAGE_PIN C17 [get_ports {o_tr_state[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_tr_state[0]}]
+set_property PACKAGE_PIN D18 [get_ports {o_tr_state[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_tr_state[1]}]
+set_property PACKAGE_PIN E18 [get_ports {o_tr_state[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_tr_state[2]}]
+
+# PMOD Ports (experimental)
+set_property PACKAGE_PIN H4 [get_ports {o_otn_rx_data}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_otn_rx_data}]
+
+set_property PACKAGE_PIN K1 [get_ports {i_otn_tx_data}]
+set_property IOSTANDARD LVCMOS33 [get_ports {i_otn_tx_data}]
+
+set_property PACKAGE_PIN E7 [get_ports {o_otn_rx_ack}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_otn_rx_ack}]
+
+set_property PACKAGE_PIN H2 [get_ports {i_otn_tx_ack}]
+set_property IOSTANDARD LVCMOS33 [get_ports {i_otn_tx_ack}]
 
 
 # ==== UART ====

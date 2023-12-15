@@ -17,6 +17,7 @@ module rec_tran (
     // input control signals
     input        i_tx_fifo_ready,
     // data in/out of the FPGA
+    output [2:0] o_rt_state,
     input        i_otn_tx_data,
     output reg   o_otn_rx_ack
 );
@@ -70,6 +71,8 @@ module rec_tran (
     
     // slave inteface fifo data valid
     assign s_fifo_frame_data_valid = (r_bit_count == 3'd0) && ((r_state == capture_pattern) || (r_state == get_frame)) && baud_en;
+    
+    assign o_rt_state = r_state;
     
     // reverse otn_tx_data_arr bits
     generate

@@ -9,7 +9,9 @@ module receiver (
     input         i_corrupt_en,
     input  [7:0]  i_corrupt_seed,
     output        o_uart_tx,
+    output        o_crc_err,
     output [7:0]  o_crc_val,
+    output [2:0]  o_rt_state,
     // TRANSMIT INTERFACE
     input         i_otn_tx_data,
     output        o_otn_rx_ack
@@ -38,12 +40,14 @@ module receiver (
     wire         demap_crc_err;
     wire         demap_crc_err_valid;
     reg          c_demap_crc_err, r_demap_crc_err;
-    reg          demap_crc_err_d1;
+    reg [0:39]   demap_crc_err_arr;
     
     // ARQ EN
     wire         demap_arq_en;
     wire         demap_arq_en_valid;
     reg          c_demap_arq_en, r_demap_arq_en;
+    
+    assign o_crc_err = r_demap_crc_err;
     
     // Serial receiver & ACK Transmitter
     rec_tran rec_tran_inst (
@@ -61,6 +65,7 @@ module receiver (
         // input control signals
         .i_tx_fifo_ready     (demap_pyld_fifo_ready),
         // data in/out of the FPGA
+        .o_rt_state          (o_rt_state),
         .i_otn_tx_data       (i_otn_tx_data),
         .o_otn_rx_ack        (o_otn_rx_ack)
     );
@@ -91,7 +96,7 @@ module receiver (
     // UART TX FIFO (Takes in demapped payload data, sends it to UART TX)
     // this FIFO must reset when a CRC error is detected.
     axis_data_fifo_rx axis_fifo_inst (
-        .s_axis_aresetn  (~(i_rst /*|| (demap_crc_err_d1 && r_demap_arq_en)*/)), // TODO: THIS NEEDS TO BE FIXED IN ORDER FOR ARQ TO WORK!!!
+        .s_axis_aresetn  (~(i_rst || (|demap_crc_err_arr && r_demap_arq_en))),
         .s_axis_aclk     (i_clk),
         .s_axis_tvalid   (demap_pyld_data_valid),
         .s_axis_tready   (demap_pyld_fifo_ready),
@@ -129,10 +134,18 @@ module receiver (
     assign uart_tx_enable = ~r_demap_arq_en || ~r_demap_crc_err;
     
     // register update process
-    always @(posedge i_clk) begin
+    always @(posedge i_clk) begin : RegProc
+        integer I;
         r_demap_crc_err <= c_demap_crc_err;
         r_demap_arq_en  <= c_demap_arq_en;
-        demap_crc_err_d1 <= demap_crc_err;
+        if (i_rst) begin
+            demap_crc_err_arr <= 0;
+        end else begin
+            for (I = 0; I < 40; I = I + 1) begin 
+                if (I == 0) begin demap_crc_err_arr[0] <= demap_crc_err;          end 
+                else        begin demap_crc_err_arr[I] <= demap_crc_err_arr[I-1]; end
+            end
+        end
     end
     
     always @(posedge i_clk) begin

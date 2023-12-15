@@ -45,13 +45,13 @@ module crc_calc # (
                 1'b0 : begin
                     if (i_row_cnt == 3 && i_col_cnt == 1040 && i_frame_data_valid) begin
                         // Check incoming CRC with currently calculated one
-                        o_frame_data        <= crc_val;
+                        o_frame_data        <= i_frame_data;
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas; 
-                        o_crc_val           <= crc_val;
+                        o_crc_val           <= ~crc_val;
                         o_crc_err_valid     <= 1'b1;
                         // Check CRC val and set error state if not equal
-                        if(i_frame_data != crc_val) begin
+                        if(i_frame_data != ~crc_val) begin
                             o_crc_err       <= 1'b1;
                         end else begin
                             o_crc_err       <= 1'b0;
@@ -70,8 +70,10 @@ module crc_calc # (
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas;
                         // Reset hardware interface
-                        crc_val             <= 8'hFF;
-                        o_crc_val           <= 8'hFF;
+                        if (i_row_cnt == 0) begin
+                            crc_val             <= 8'hFF;
+                            o_crc_val           <= 8'hFF;
+                        end
                         o_crc_err           <= 1'b0;
                         o_crc_err_valid     <= 1'b0;
                     end else begin
@@ -90,10 +92,11 @@ module crc_calc # (
                     o_crc_err_valid <= 1'b0;           
                     if (i_row_cnt == 3 && i_col_cnt == 1040 && i_frame_data_valid) begin
                         // Send CRC on output
-                        o_frame_data        <= crc_val;
+                        // a part of the CRC calculation process is negating the final value after calculation for the entire frame is complete
+                        o_frame_data        <= ~crc_val;
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas;
-                        o_crc_val           <= crc_val;
+                        o_crc_val           <= ~crc_val;
                     end else if(i_col_cnt >= 16 && i_col_cnt <= 1039 && i_frame_data_valid) begin
                         // Calculate CRC and pass data through.
                         o_frame_data        <= i_frame_data;
@@ -106,8 +109,12 @@ module crc_calc # (
                         o_frame_data_valid  <= i_frame_data_valid;
                         o_frame_data_fas    <= i_frame_data_fas;
                         // Reset hardware interface
-                        crc_val             <= 8'hFF;
-                        o_crc_val           <= 8'hFF;
+                        if (i_row_cnt == 0) begin
+                            crc_val             <= 8'hFF;
+                            o_crc_val           <= 8'hFF;
+                        end
+                        o_crc_err           <= 1'b0;
+                        o_crc_err_valid     <= 1'b0;
                     end else begin
                         o_frame_data        <= i_frame_data;
                         o_frame_data_valid  <= i_frame_data_valid;

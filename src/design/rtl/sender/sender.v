@@ -9,6 +9,9 @@ module sender (
     input          i_uart_rx,
     input          i_arq_en,
     output [7:0]   o_crc_val,
+    output [2:0]   o_tr_state,
+    input          i_retrans_en,
+    output         o_retrans_wait,
     // TRANSMIT INTERFACE
     output         o_otn_rx_data,
     input          i_otn_tx_ack
@@ -32,7 +35,10 @@ module sender (
     wire [7:0]   map_frame_data;
     wire         map_frame_data_valid;
     wire         map_frame_data_fas;
+    
     wire         line_fifo_ready;
+    wire [7:0]   line_frame_data;
+    wire         line_frame_data_valid;
     
     // TRAN REC IN/OUT
     wire [7:0]   tr_frame_data;
@@ -100,9 +106,9 @@ module sender (
         .s_axis_aresetn  (~(i_rst || tr_send_complete)),
         .s_axis_aclk     (i_clk),
         // mapper -> FIFO in
-        .s_axis_tvalid   (map_frame_data_valid),
+        .s_axis_tvalid   (line_frame_data_valid),
         .s_axis_tready   (line_fifo_ready),
-        .s_axis_tdata    (map_frame_data),
+        .s_axis_tdata    (line_frame_data),
         // FIFO out -> tran_rec
         .m_axis_tvalid   (lf_frame_data_valid),
         .m_axis_tready   (lf_ready),
@@ -113,6 +119,11 @@ module sender (
     // don't read out of line FIFO until: tran_rec FIFO is ready, retrans is occuring, and line FIFO write side is ready
     assign lf_ready = tr_fifo_ready && tr_read_line_fifo && line_fifo_ready;
     
+    // line FIFO data in
+    assign line_frame_data       = (tr_read_line_fifo) ? lf_frame_data                   : map_frame_data;
+    assign line_frame_data_valid = (tr_read_line_fifo) ? lf_frame_data_valid && lf_ready : map_frame_data_valid;
+    
+    // tran rec AXIS data in
     assign tr_frame_data       = (tr_read_line_fifo) ? lf_frame_data       : map_frame_data;
     assign tr_frame_data_valid = (tr_read_line_fifo) ? lf_frame_data_valid : map_frame_data_valid;
     
@@ -135,7 +146,10 @@ module sender (
         .o_otn_rx_data      (o_otn_rx_data),
         .i_otn_tx_ack       (i_otn_tx_ack),
         // FPGA switch input
-        .i_arq_en           (i_arq_en)
+        .o_tr_state         (o_tr_state),
+        .i_arq_en           (i_arq_en),
+        .i_retrans_en       (i_retrans_en),
+        .o_retrans_wait     (o_retrans_wait)
     );
     
     

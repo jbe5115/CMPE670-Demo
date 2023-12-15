@@ -19,9 +19,11 @@ architecture tb of send_rec_tb is
     signal  arq_en         :  std_logic;
     signal  rec_crc_val    :  std_logic_vector(7 downto 0);
     signal  send_crc_val   :  std_logic_vector(7 downto 0);
+    signal  retrans_en     :  std_logic:= '1';
+    signal  retrans_wait   :  std_logic;
 
     -- Clock period definitions
-    constant  clk_period   :  time     :=  2 ns; -- Does not represent current rate (100 MHz)
+    constant  clk_period   :  time     :=  5 ns; -- Does not represent current rate (100 MHz)
     constant  clk_per_sym  :  integer  :=  868; -- was 868 with 10 ns clock
     constant  symbol_len   :  time     :=  clk_period*clk_per_sym;  --   100  MHz  /  115200  =  868.1  clock/symbol
 
@@ -32,9 +34,10 @@ architecture tb of send_rec_tb is
     
     component top is
         port (
-            i_clk, i_rst, i_uart_rx, i_arq_en, i_corrupt_en : in std_logic;
-            o_uart_tx : out std_logic;
-            o_crc_val_sen, o_crc_val_rec : out std_logic_vector(7 downto 0)
+            i_clk, i_rst, i_uart_rx, i_arq_en, i_corrupt_en, i_retrans_en : in std_logic;
+            i_corrupt_seed : in std_logic_vector(7 downto 0);
+            o_uart_tx, o_retrans_wait : out std_logic
+            --o_crc_val_sen, o_crc_val_rec : out std_logic_vector(7 downto 0)
         );
     end component;
 
@@ -47,9 +50,12 @@ begin
         i_uart_rx     => i_uart_rx,
         i_arq_en      => arq_en,
         i_corrupt_en  => corrupt_en,
-        o_uart_tx     => uart_tx,
-        o_crc_val_sen => send_crc_val,
-        o_crc_val_rec => rec_crc_val
+        i_corrupt_seed => x"FB",
+        i_retrans_en   => retrans_en,
+        o_retrans_wait => retrans_wait,
+        o_uart_tx     => uart_tx
+        --o_crc_val_sen => send_crc_val,
+        --o_crc_val_rec => rec_crc_val
     );
 
 
@@ -59,6 +65,13 @@ begin
         wait for clk_period/2;
         clk <= '1';
         wait for clk_period/2;
+    end process;
+    
+    process is begin
+        retrans_en <= '1';
+        wait for clk_period*2;
+        retrans_en <= '0';
+        wait for clk_period*2;
     end process;
     
     -- read data process
@@ -140,7 +153,7 @@ begin
     begin
         sys_rst         <= '1';
         arq_en          <= '1';
-        corrupt_en      <= '0';
+        corrupt_en      <= '1';
         
         file_open(stim, payload_file, read_mode);
         
@@ -157,25 +170,28 @@ begin
             end loop;
             EOL_N := true;
         end loop;
-        
-        wait for 50 ms;
         -- "refresh" file
+        --file_open(stim, payload_file, read_mode);
+        --wait for 5 us;
         file_close(stim);
-        file_open(stim, payload_file, read_mode);
-        wait for 5 us;
+        --corrupt_en <= '0';
+        wait until retrans_wait = '1';
+        wait until retrans_wait = '1';
+        corrupt_en <= '0';
+        wait for 500 ms;
         
-        while not endfile(stim) loop
-            readline(stim, L_IN);          -- get line
-            hread(L_IN, byte_out, EOL_N); -- get first byte
-            while (EOL_N = true) loop
-                send_char(unsigned(byte_out));
-                hread(L_IN, byte_out, EOL_N);
-                wait for 0 ns;
-            end loop;
-            EOL_N := true;
-        end loop;    
+--        while not endfile(stim) loop
+--            readline(stim, L_IN);          -- get line
+--            hread(L_IN, byte_out, EOL_N); -- get first byte
+--            while (EOL_N = true) loop
+--                send_char(unsigned(byte_out));
+--                hread(L_IN, byte_out, EOL_N);
+--                wait for 0 ns;
+--            end loop;
+--            EOL_N := true;
+--        end loop;    
         
-        wait for 400 ms;  
+        wait for 2000 ms;  
         
         assert false
             report "End of simulation"

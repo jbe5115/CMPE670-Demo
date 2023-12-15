@@ -20,7 +20,10 @@ module tran_rec (
     output      o_otn_rx_data,
     input       i_otn_tx_ack,
     // fpga switch input
-    input       i_arq_en
+    output [2:0] o_tr_state,
+    input        i_arq_en,
+    input        i_retrans_en,
+    output       o_retrans_wait
 );
 
     // clock control
@@ -35,7 +38,8 @@ module tran_rec (
     localparam read_ack       = 3'b011;
     localparam check_ack      = 3'b100;
     localparam trans_complete = 3'b101;
-    localparam send_mem_frame = 3'b110;
+    localparam send_mf_wait   = 3'b110;
+    localparam send_mem_frame = 3'b111;
     reg [2:0] c_state, r_state;
     
     // total byte count for transmission
@@ -47,6 +51,14 @@ module tran_rec (
     reg [7:0]  c_current_byte, r_current_byte;
     // o_otn_rx_data register
     reg        c_otn_rx_data, r_otn_rx_data;
+    
+    // trans_complete 40-cycle counter state
+    reg [5:0]  c_tc_count, r_tc_count;
+    
+    // tran_rec fifo read data in count (to avoid reading in more than necessary)
+    reg [12:0] c_tr_fifo_byte_count, r_tr_fifo_byte_count;
+    
+    wire tr_fifo_data_valid, tr_fifo_ready;
     
     
     // clock domain synchronization registers for i_otn_tx_ack
@@ -66,22 +78,35 @@ module tran_rec (
     wire       s_fifo_ready, m_fifo_ready;
     wire       m_fifo_data_valid;
     wire [7:0] m_fifo_data;
+    
+    // retrans enable edge detector
+    wire       retrans_en_edge;
+    reg  [0:2] retrans_en_arr;
    
     // direct output assignments
     assign o_send_complete  = (r_state == trans_complete);
     assign o_read_line_fifo = (r_state == send_mem_frame);
+    assign o_fifo_ready     = tr_fifo_ready;
     assign o_retrans_req    = r_retrans_req;
-    assign o_fifo_ready     = s_fifo_ready;
     assign o_otn_rx_data    = r_otn_rx_data;
+    assign o_retrans_wait   = (r_state == send_mf_wait);
+    
+    assign o_tr_state       = r_state;
     
     assign m_fifo_ready = ((r_state == send_frame) || (r_state == send_mem_frame)) && (r_bit_count == 3'd7) && baud_en;
     assign baud_en  = i_sclk_en_16_x_baud && (scount5 == 5'd19);
+    
+    assign retrans_en_edge = !retrans_en_arr[2] && retrans_en_arr[1];
+    
+    // TR FIFO SLAVE INTERFACE
+    assign tr_fifo_data_valid = i_frame_data_valid && s_fifo_ready && (r_tr_fifo_byte_count < 4164);
+    assign tr_fifo_ready      = s_fifo_ready && (r_tr_fifo_byte_count < 4164);
 
     // RX FIFO (Takes in mapped OTN data, sends it out of FPGA thru state machine)
     axis_data_fifo_rx axis_fifo_inst (
         .s_axis_aresetn  (~i_rst),  
         .s_axis_aclk     (i_clk),        
-        .s_axis_tvalid   (i_frame_data_valid),    
+        .s_axis_tvalid   (tr_fifo_data_valid),    
         .s_axis_tready   (s_fifo_ready),    
         .s_axis_tdata    (i_frame_data),     
         .m_axis_tvalid   (m_fifo_data_valid),    
@@ -125,10 +150,15 @@ module tran_rec (
                 end
                 check_ack : begin
                     // is the ACK good or bad???
-                    c_state = (r_otn_tx_ack) ? trans_complete : send_mem_frame;
+                    c_state = (r_otn_tx_ack) ? trans_complete : send_mf_wait;
                 end
                 trans_complete : begin
-                    c_state = idle;
+                    if (r_tc_count == 40) begin
+                        c_state = idle;
+                    end
+                end
+                send_mf_wait : begin
+                    c_state = (retrans_en_edge) ? send_mem_frame : send_mf_wait;
                 end
                 send_mem_frame : begin
                     if (r_byte_count == 4165) begin // mem frame is done transmitting?
@@ -225,6 +255,34 @@ module tran_rec (
         end
     end
     
+    // transmit complete counter process
+    always @(*) begin
+        if (i_rst) begin
+            c_tc_count = 0;
+        end else begin
+            if (r_state == trans_complete) begin
+                c_tc_count = r_tc_count + 1;
+            end else begin
+                c_tc_count = 0;
+            end
+        end
+    end
+    
+    always @(*) begin
+        c_tr_fifo_byte_count = r_tr_fifo_byte_count;
+        if (i_rst) begin
+            c_tr_fifo_byte_count = 0;
+        end else begin
+            if ((r_state == send_frame) || (r_state == send_mem_frame)) begin
+                if (tr_fifo_data_valid && tr_fifo_ready) begin
+                    c_tr_fifo_byte_count = r_tr_fifo_byte_count + 1;
+                end
+            end else begin
+                c_tr_fifo_byte_count = 0;
+            end
+        end
+    end
+    
     // scount5 counter process
     always @(posedge i_clk) begin
         if (i_rst) begin
@@ -240,20 +298,30 @@ module tran_rec (
     
     always @(posedge i_clk) begin : RegProc
         integer I;
-        r_state        <= c_state;
-        r_byte_count   <= c_byte_count;
-        r_otn_tx_ack   <= c_otn_tx_ack;
-        r_retrans_req  <= c_retrans_req;
-        r_bit_count    <= c_bit_count;
-        r_current_byte <= c_current_byte;
-        r_otn_rx_data  <= c_otn_rx_data;
+        r_state              <= c_state;
+        r_byte_count         <= c_byte_count;
+        r_otn_tx_ack         <= c_otn_tx_ack;
+        r_retrans_req        <= c_retrans_req;
+        r_bit_count          <= c_bit_count;
+        r_current_byte       <= c_current_byte;
+        r_otn_rx_data        <= c_otn_rx_data;
+        r_tc_count           <= c_tc_count;
+        r_tr_fifo_byte_count <= c_tr_fifo_byte_count;
         if (i_rst) begin
             otn_tx_ack_sync_arr <= 3'd0;
-        end else if (baud_en) begin
-            for (I = 0; I < 3; I = I + 1) begin 
-                if (I == 0) begin otn_tx_ack_sync_arr[0] <= i_otn_tx_ack;             end 
-                else        begin otn_tx_ack_sync_arr[I] <= otn_tx_ack_sync_arr[I-1]; end
+            retrans_en_arr <= 3'd0;
+        end else begin
+            if (baud_en) begin
+                for (I = 0; I < 3; I = I + 1) begin 
+                    if (I == 0) begin otn_tx_ack_sync_arr[0] <= i_otn_tx_ack;             end 
+                    else        begin otn_tx_ack_sync_arr[I] <= otn_tx_ack_sync_arr[I-1]; end
+                end
             end
+            for (I = 0; I < 3; I = I + 1) begin
+                if (I == 0) begin retrans_en_arr[0] <= i_retrans_en;        end
+                else        begin retrans_en_arr[I] <= retrans_en_arr[I-1]; end
+            end
+            
         end
     end
 
