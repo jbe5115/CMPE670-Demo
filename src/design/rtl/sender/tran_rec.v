@@ -137,9 +137,7 @@ module tran_rec (
                     end
                 end
                 ack_wait : begin
-                    if (timeout_event) begin
-                        c_state = send_frame;
-                    end else if (!otn_tx_ack_sync_arr[2] && baud_en) begin // ACK start bit detected
+                    if (!otn_tx_ack_sync_arr[2] && baud_en) begin // ACK start bit detected
                         c_state = read_ack;
                     end
                 end
@@ -324,30 +322,5 @@ module tran_rec (
             
         end
     end
-
-    reg wd_timer_en;
-    always @(posedge i_clk) begin
-        if (r_state == read_ack) begin
-            wd_timer_en <= 1'b1;
-        end else begin
-            wd_timer_en <= 1'b0;
-        end
-    end
-
-    wire wd_signal_obs;
-    assign wd_signal_obs = r_state == read_ack;
-
-    wire timeout_event;
-    wire signal_match_event;
-
-    watchdog watchdog_inst (
-        .i_clk(i_clk),
-        .i_rst(i_rst),
-        .i_timer_en(wd_timer_en),
-        .i_signal_obs(wd_signal_obs),
-        .i_signal_match(1'b1),
-        .o_timeout_event(timeout_event),
-        .o_signal_match_event (signal_match_event)
-    );
 
 endmodule
